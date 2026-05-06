@@ -87,6 +87,9 @@ body{
 .sl-growing{background:linear-gradient(90deg,#1565C0,#64B5F6)}
 .sl-soon{background:linear-gradient(90deg,#757575,#BDBDBD)}
 .sl-funzone{background:linear-gradient(90deg,#E64A19,#FF8A65)}
+.sl-world{background:linear-gradient(90deg,#1565C0,#42A5F5)}
+.sl-arts{background:linear-gradient(90deg,#AD1457,#F48FB1)}
+.sl-life{background:linear-gradient(90deg,#558B2F,#AED581)}
 .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .act-card{border-radius:24px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 6px 18px rgba(0,0,0,.13);position:relative;overflow:hidden;border:none}
 .act-card:active{transform:scale(.92);box-shadow:0 2px 8px rgba(0,0,0,.1)}
@@ -480,9 +483,163 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 [data-tip]:hover::after,[data-tip]:focus::after{opacity:1}
 /* Topbar tooltips point DOWN (not up, since topbar is at top of screen) */
 #topbar [data-tip]::after{bottom:auto;top:calc(100% + 7px)}
+
+/* ═══════════════════════════════════
+   SMART HUD
+═══════════════════════════════════ */
+#smart-hud{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  display:none;flex-direction:row;align-items:center;gap:18px;
+  background:rgba(255,255,255,.97);border-radius:24px;
+  box-shadow:0 4px 24px rgba(0,0,0,.13);
+  padding:10px 24px;z-index:150;
+  border:2px solid rgba(255,107,53,.18);
+  backdrop-filter:blur(14px);
+  white-space:nowrap;
+}
+#smart-hud.show{display:flex}
+.hud-item{text-align:center;min-width:60px}
+.hud-lbl{font-size:.6rem;font-weight:900;color:#BBB;text-transform:uppercase;letter-spacing:.7px}
+.hud-val{font-size:1.25rem;font-weight:900;color:var(--text);line-height:1}
+#hud-score-val{color:var(--orange)}
+.hud-div{width:1px;height:36px;background:rgba(0,0,0,.07)}
+/* SmartScore ring badge */
+.ss-ring{
+  width:52px;height:52px;border-radius:50%;
+  background:conic-gradient(var(--orange) 0deg, #EEE 0deg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:900;color:var(--orange);
+  box-shadow:0 2px 8px rgba(255,107,53,.2);
+  transition:background .4s;
+  position:relative;
+}
+.ss-ring::before{
+  content:'';position:absolute;inset:5px;
+  background:white;border-radius:50%;z-index:0;
+}
+.ss-ring span{position:relative;z-index:1}
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+#app-footer{
+  background:white;border-top:2px solid #F0F0F0;
+  padding:18px 20px 24px;text-align:center;
+  display:none; /* shown on hub + welcome screens */
+}
+#app-footer.show{display:block}
+.footer-links{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;
+  margin-bottom:8px;
+}
+.footer-links a{
+  color:#AAA;font-size:.78rem;font-weight:800;
+  text-decoration:none;cursor:pointer;
+  transition:color .15s;
+}
+.footer-links a:hover{color:var(--orange)}
+.footer-copy{font-size:.7rem;color:#CCC;font-weight:700}
+/* Footer info modal */
+#footer-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;align-items:flex-end;justify-content:center}
+#footer-modal.show{display:flex}
+.footer-modal-card{
+  background:white;border-radius:28px 28px 0 0;
+  max-height:80vh;overflow-y:auto;width:100%;max-width:540px;
+  padding:24px 22px 32px;
+}
+.fmc-title{font-size:1.3rem;font-weight:900;color:var(--text);margin-bottom:14px;text-align:center}
+.fmc-body{font-size:.82rem;font-weight:700;color:#555;line-height:1.75}
+.fmc-body h4{color:var(--orange);font-size:.9rem;margin:14px 0 4px}
+.fmc-close{
+  width:100%;margin-top:20px;padding:14px;border:none;
+  background:var(--orange);color:white;font-size:1rem;font-weight:900;
+  border-radius:18px;cursor:pointer;font-family:inherit;
+}
+.fmc-close:active{opacity:.8}
+
+/* ═══════════════════════════════════
+   COIN WORLD GAME
+═══════════════════════════════════ */
+.coin-display{
+  display:flex;flex-direction:column;align-items:center;
+  gap:8px;width:100%;
+}
+.coin-visual{
+  width:110px;height:110px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.2rem;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  animation:coinSpin .6s ease;
+  position:relative;
+}
+@keyframes coinSpin{0%{transform:rotateY(0deg) scale(.8)}60%{transform:rotateY(180deg) scale(1.05)}100%{transform:rotateY(360deg) scale(1)}}
+.coin-penny{background:radial-gradient(circle at 35% 35%,#E8A87C,#C07A3A);border:4px solid #B87333}
+.coin-nickel{background:radial-gradient(circle at 35% 35%,#E8E8D0,#A8A8A0);border:4px solid #8E8E80}
+.coin-dime{background:radial-gradient(circle at 35% 35%,#DDD,#A0A0A0);border:3px solid #909090;width:80px;height:80px;font-size:2.4rem}
+.coin-quarter{background:radial-gradient(circle at 35% 35%,#E8E8E0,#B0B0A8);border:5px solid #909080;width:120px;height:120px}
+.coin-label{font-size:.85rem;font-weight:900;color:#888;letter-spacing:.5px}
+
+/* ═══════════════════════════════════
+   PATTERN PLAY GAME
+═══════════════════════════════════ */
+.pattern-display{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:6px;width:100%;padding:8px;
+}
+.pat-item{
+  font-size:2rem;width:52px;height:52px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  background:#F5F5F5;border:2px solid #EEE;
+  transition:transform .15s;
+}
+.pat-item.blank{
+  background:linear-gradient(135deg,#FFF3EE,#FFE0D0);
+  border:3px dashed var(--orange);
+  font-size:1.6rem;color:var(--orange);
+  animation:patPulse 1s infinite alternate;
+}
+@keyframes patPulse{from{transform:scale(.95);border-color:var(--orange)}to{transform:scale(1.05);border-color:var(--yellow)}}
+
+/* ═══════════════════════════════════
+   ONE MORE / ONE LESS
+═══════════════════════════════════ */
+.onemore-display{
+  display:flex;flex-direction:column;align-items:center;gap:14px;width:100%
+}
+.om-number{
+  font-size:5rem;font-weight:900;color:var(--blue);
+  background:linear-gradient(135deg,#E3F2FD,#BBDEFB);
+  width:130px;height:130px;border-radius:28px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(33,150,243,.2);
+  animation:omPop .3s cubic-bezier(.36,.07,.19,.97);
+}
+@keyframes omPop{0%{transform:scale(.8)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+.om-objects{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:280px}
+.om-obj{font-size:1.8rem;animation:omPop .25s ease}
+
 </style>
 </head>
 <body>
+
+
+<!-- ════════════ SMART HUD (game overlay) ════════════ -->
+<div id="smart-hud">
+  <div class="hud-item">
+    <div class="hud-lbl">SmartScore</div>
+    <div class="ss-ring" id="ss-ring"><span id="hud-score-val">0</span></div>
+  </div>
+  <div class="hud-div"></div>
+  <div class="hud-item">
+    <div class="hud-lbl">⏱ Time</div>
+    <div class="hud-val" id="hud-time">0:00</div>
+  </div>
+  <div class="hud-div"></div>
+  <div class="hud-item">
+    <div class="hud-lbl">✓ Done</div>
+    <div class="hud-val" id="hud-qs">0</div>
+  </div>
+</div>
 
 <!-- ════════════ TOP BAR ════════════ -->
 <div id="topbar">
@@ -671,6 +828,9 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
       <div class="act-card ac-math2" onclick="launch('addition')"><span class="act-icon">➕</span><div class="act-name">Adding</div><div class="act-desc">Add groups together!</div></div>
       <div class="act-card ac-math3" onclick="launch('shapes')"><span class="act-icon">🔷</span><div class="act-name">Shapes</div><div class="act-desc">Name the shape!</div></div>
       <div class="act-card ac-math4" onclick="launch('compare')"><span class="act-icon">⚖️</span><div class="act-name">Big &amp; Small</div><div class="act-desc">Which is bigger?</div></div>
+      <div class="act-card ac-math1" onclick="launch('coins')"><span class="act-icon">🪙</span><div class="act-name">Coin World</div><div class="act-desc">Name that coin!</div></div>
+      <div class="act-card ac-math2" onclick="launch('patterns')"><span class="act-icon">🔵</span><div class="act-name">Pattern Play</div><div class="act-desc">What comes next?</div></div>
+      <div class="act-card ac-math3" onclick="launch('onemore')"><span class="act-icon">🔢</span><div class="act-name">One More/Less</div><div class="act-desc">1 more or 1 less!</div></div>
     </div>
   </div>
 
@@ -680,6 +840,8 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
     <div class="act-grid">
       <div class="act-card ac-read1" onclick="launch('letters')"><span class="act-icon">🔤</span><div class="act-name">Letters</div><div class="act-desc">Learn A B C!</div></div>
       <div class="act-card ac-read2" onclick="launch('words')"><span class="act-icon">📖</span><div class="act-name">Words</div><div class="act-desc">Match words!</div></div>
+      <div class="act-card ac-read1" onclick="launch('rhymes')"><span class="act-icon">🎵</span><div class="act-name">Rhymes</div><div class="act-desc">Words that sound alike!</div></div>
+      <div class="act-card ac-read2" onclick="launch('phonics')"><span class="act-icon">🔊</span><div class="act-name">Phonics</div><div class="act-desc">Letter sounds!</div></div>
     </div>
   </div>
 
@@ -691,6 +853,41 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
       <div class="act-card ac-sci2" onclick="launch('animals')"><span class="act-icon">🐾</span><div class="act-name">Animals</div><div class="act-desc">Habitats &amp; sounds!</div></div>
       <div class="act-card ac-sci3" onclick="launch('weather')"><span class="act-icon">🌤️</span><div class="act-name">Weather</div><div class="act-desc">Sun, rain &amp; snow!</div></div>
       <div class="act-card ac-sci1" onclick="launch('experiment')"><span class="act-icon">🧪</span><div class="act-name">Experiments</div><div class="act-desc">Sink or float?</div></div>
+      <div class="act-card ac-sci2" onclick="launch('space')"><span class="act-icon">🚀</span><div class="act-name">Space</div><div class="act-desc">Planets &amp; stars!</div></div>
+      <div class="act-card ac-sci3" onclick="launch('physics')"><span class="act-icon">⚡</span><div class="act-name">Physics Fun</div><div class="act-desc">Push, pull &amp; forces!</div></div>
+      <div class="act-card ac-sci1" onclick="launch('bodyscience')"><span class="act-icon">🫀</span><div class="act-name">Our Body</div><div class="act-desc">Body parts &amp; health!</div></div>
+      <div class="act-card ac-sci2" onclick="launch('nature')"><span class="act-icon">🌿</span><div class="act-name">Nature</div><div class="act-desc">Plants &amp; seasons!</div></div>
+    </div>
+  </div>
+
+  <!-- WORLD & GEOGRAPHY -->
+  <div class="subj-block" id="blk-world">
+    <div class="section-label sl-world">🌍 World &amp; Geography</div>
+    <div class="act-grid">
+      <div class="act-card ac-math2" onclick="launch('geography')"><span class="act-icon">🗺️</span><div class="act-name">Continents</div><div class="act-desc">7 continents!</div></div>
+      <div class="act-card ac-math3" onclick="launch('flags')"><span class="act-icon">🏁</span><div class="act-name">Flags</div><div class="act-desc">Match the flag!</div></div>
+      <div class="act-card ac-math1" onclick="launch('directions')"><span class="act-icon">🧭</span><div class="act-name">Directions</div><div class="act-desc">North, South, East, West!</div></div>
+      <div class="act-card ac-math4" onclick="launch('landmarks')"><span class="act-icon">🏛️</span><div class="act-name">Landmarks</div><div class="act-desc">Famous places!</div></div>
+    </div>
+  </div>
+
+  <!-- ARTS & MUSIC -->
+  <div class="subj-block" id="blk-arts">
+    <div class="section-label sl-arts">🎨 Arts &amp; Music</div>
+    <div class="act-grid">
+      <div class="act-card ac-read1" onclick="launch('music')"><span class="act-icon">🎵</span><div class="act-name">Music</div><div class="act-desc">Notes &amp; rhythm!</div></div>
+      <div class="act-card ac-read2" onclick="launch('colormix')"><span class="act-icon">🖌️</span><div class="act-name">Color Mixing</div><div class="act-desc">What colors mix?</div></div>
+    </div>
+  </div>
+
+  <!-- LIFE SKILLS -->
+  <div class="subj-block" id="blk-life">
+    <div class="section-label sl-life">🧠 Life Skills</div>
+    <div class="act-grid">
+      <div class="act-card ac-math1" onclick="launch('time')"><span class="act-icon">🕐</span><div class="act-name">Telling Time</div><div class="act-desc">Read the clock!</div></div>
+      <div class="act-card ac-math2" onclick="launch('calendar')"><span class="act-icon">📅</span><div class="act-name">Days &amp; Months</div><div class="act-desc">Days of the week!</div></div>
+      <div class="act-card ac-math3" onclick="launch('money')"><span class="act-icon">💰</span><div class="act-name">Money</div><div class="act-desc">Count the money!</div></div>
+      <div class="act-card ac-math4" onclick="launch('sorting')"><span class="act-icon">🗂️</span><div class="act-name">Sorting</div><div class="act-desc">Group things together!</div></div>
     </div>
   </div>
 
@@ -830,6 +1027,168 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
   <button class="next-btn" id="colors-nx" onclick="nextQ()">Next ➡️</button>
 </div>
 
+<!-- ════════════ NEW MATH GAME SCREENS ════════════ -->
+
+<!-- COIN WORLD -->
+<div class="screen game-screen" id="s-coins">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="coins-pf" style="width:0%"></div></div><div class="prog-lbl" id="coins-pl">0/8</div></div>
+  <div class="game-q" id="coins-q">Which coin is this?</div>
+  <div class="game-card" id="coins-area"></div>
+  <div class="fb-bar" id="coins-fb"></div>
+  <div class="answers" id="coins-ans"></div>
+  <button class="next-btn" id="coins-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+
+<!-- PATTERN PLAY -->
+<div class="screen game-screen" id="s-patterns">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="patterns-pf" style="width:0%"></div></div><div class="prog-lbl" id="patterns-pl">0/6</div></div>
+  <div class="game-q" id="patterns-q">What comes next?</div>
+  <div class="game-card" style="flex-direction:column;gap:12px" id="patterns-area"></div>
+  <div class="fb-bar" id="patterns-fb"></div>
+  <div class="answers" id="patterns-ans"></div>
+  <button class="next-btn" id="patterns-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+
+<!-- ONE MORE / ONE LESS -->
+<div class="screen game-screen" id="s-onemore">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="onemore-pf" style="width:0%"></div></div><div class="prog-lbl" id="onemore-pl">0/8</div></div>
+  <div class="game-q" id="onemore-q"></div>
+  <div class="game-card" id="onemore-area"></div>
+  <div class="fb-bar" id="onemore-fb"></div>
+  <div class="answers" id="onemore-ans"></div>
+  <button class="next-btn" id="onemore-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+
+<!-- ════════════ EXPANDED SUBJECT SCREENS ════════════ -->
+
+<div class="screen game-screen" id="s-space">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="space-pf" style="width:0%"></div></div><div class="prog-lbl" id="space-pl">0/8</div></div>
+  <div class="game-q" id="space-q">Name that planet!</div>
+  <div class="game-card" id="space-area"></div>
+  <div class="fb-bar" id="space-fb"></div>
+  <div class="answers" id="space-ans"></div>
+  <button class="next-btn" id="space-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-physics">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="physics-pf" style="width:0%"></div></div><div class="prog-lbl" id="physics-pl">0/8</div></div>
+  <div class="game-q" id="physics-q">Push or pull?</div>
+  <div class="game-card" id="physics-area"></div>
+  <div class="fb-bar" id="physics-fb"></div>
+  <div class="answers" id="physics-ans"></div>
+  <button class="next-btn" id="physics-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-bodyscience">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="bodyscience-pf" style="width:0%"></div></div><div class="prog-lbl" id="bodyscience-pl">0/8</div></div>
+  <div class="game-q" id="bodyscience-q">What part of the body is this?</div>
+  <div class="game-card" id="bodyscience-area"></div>
+  <div class="fb-bar" id="bodyscience-fb"></div>
+  <div class="answers" id="bodyscience-ans"></div>
+  <button class="next-btn" id="bodyscience-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-nature">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="nature-pf" style="width:0%"></div></div><div class="prog-lbl" id="nature-pl">0/8</div></div>
+  <div class="game-q" id="nature-q">What season is this?</div>
+  <div class="game-card" id="nature-area"></div>
+  <div class="fb-bar" id="nature-fb"></div>
+  <div class="answers" id="nature-ans"></div>
+  <button class="next-btn" id="nature-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-rhymes">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="rhymes-pf" style="width:0%"></div></div><div class="prog-lbl" id="rhymes-pl">0/8</div></div>
+  <div class="game-q" id="rhymes-q">Which word rhymes?</div>
+  <div class="game-card" id="rhymes-area"></div>
+  <div class="fb-bar" id="rhymes-fb"></div>
+  <div class="answers" id="rhymes-ans"></div>
+  <button class="next-btn" id="rhymes-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-phonics">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="phonics-pf" style="width:0%"></div></div><div class="prog-lbl" id="phonics-pl">0/8</div></div>
+  <div class="game-q" id="phonics-q">What sound does this letter make?</div>
+  <div class="game-card" id="phonics-area"></div>
+  <div class="fb-bar" id="phonics-fb"></div>
+  <div class="answers" id="phonics-ans"></div>
+  <button class="next-btn" id="phonics-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-geography">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="geography-pf" style="width:0%"></div></div><div class="prog-lbl" id="geography-pl">0/8</div></div>
+  <div class="game-q" id="geography-q">Which continent is this?</div>
+  <div class="game-card" id="geography-area"></div>
+  <div class="fb-bar" id="geography-fb"></div>
+  <div class="answers" id="geography-ans"></div>
+  <button class="next-btn" id="geography-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-flags">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="flags-pf" style="width:0%"></div></div><div class="prog-lbl" id="flags-pl">0/8</div></div>
+  <div class="game-q" id="flags-q">Which flag belongs to this country?</div>
+  <div class="game-card" id="flags-area"></div>
+  <div class="fb-bar" id="flags-fb"></div>
+  <div class="answers" id="flags-ans"></div>
+  <button class="next-btn" id="flags-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-directions">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="directions-pf" style="width:0%"></div></div><div class="prog-lbl" id="directions-pl">0/8</div></div>
+  <div class="game-q" id="directions-q">Which direction?</div>
+  <div class="game-card" id="directions-area"></div>
+  <div class="fb-bar" id="directions-fb"></div>
+  <div class="answers" id="directions-ans"></div>
+  <button class="next-btn" id="directions-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-landmarks">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="landmarks-pf" style="width:0%"></div></div><div class="prog-lbl" id="landmarks-pl">0/8</div></div>
+  <div class="game-q" id="landmarks-q">Where is this landmark?</div>
+  <div class="game-card" id="landmarks-area"></div>
+  <div class="fb-bar" id="landmarks-fb"></div>
+  <div class="answers" id="landmarks-ans"></div>
+  <button class="next-btn" id="landmarks-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-music">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="music-pf" style="width:0%"></div></div><div class="prog-lbl" id="music-pl">0/8</div></div>
+  <div class="game-q" id="music-q">What note is this?</div>
+  <div class="game-card" id="music-area"></div>
+  <div class="fb-bar" id="music-fb"></div>
+  <div class="answers" id="music-ans"></div>
+  <button class="next-btn" id="music-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-colormix">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="colormix-pf" style="width:0%"></div></div><div class="prog-lbl" id="colormix-pl">0/8</div></div>
+  <div class="game-q" id="colormix-q">What color do you get?</div>
+  <div class="game-card" id="colormix-area"></div>
+  <div class="fb-bar" id="colormix-fb"></div>
+  <div class="answers" id="colormix-ans"></div>
+  <button class="next-btn" id="colormix-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-time">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="time-pf" style="width:0%"></div></div><div class="prog-lbl" id="time-pl">0/8</div></div>
+  <div class="game-q" id="time-q">What time does the clock show?</div>
+  <div class="game-card" id="time-area"></div>
+  <div class="fb-bar" id="time-fb"></div>
+  <div class="answers" id="time-ans"></div>
+  <button class="next-btn" id="time-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-calendar">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="calendar-pf" style="width:0%"></div></div><div class="prog-lbl" id="calendar-pl">0/8</div></div>
+  <div class="game-q" id="calendar-q">What comes next?</div>
+  <div class="game-card" id="calendar-area"></div>
+  <div class="fb-bar" id="calendar-fb"></div>
+  <div class="answers" id="calendar-ans"></div>
+  <button class="next-btn" id="calendar-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-money">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="money-pf" style="width:0%"></div></div><div class="prog-lbl" id="money-pl">0/8</div></div>
+  <div class="game-q" id="money-q">How much money is here?</div>
+  <div class="game-card" id="money-area"></div>
+  <div class="fb-bar" id="money-fb"></div>
+  <div class="answers" id="money-ans"></div>
+  <button class="next-btn" id="money-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+<div class="screen game-screen" id="s-sorting">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="sorting-pf" style="width:0%"></div></div><div class="prog-lbl" id="sorting-pl">0/8</div></div>
+  <div class="game-q" id="sorting-q">Which group does this belong to?</div>
+  <div class="game-card" id="sorting-area"></div>
+  <div class="fb-bar" id="sorting-fb"></div>
+  <div class="answers" id="sorting-ans"></div>
+  <button class="next-btn" id="sorting-nx" onclick="nextQ()">Next ➡️</button>
+</div>
 <!-- ════════════ FUN ZONE GAME SCREENS ════════════ -->
 
 <!-- BASKETBALL -->
@@ -1424,54 +1783,54 @@ const APP_VERSION = '1.0.0';
 const APP_COPYRIGHT = '© 2025 Learnly. All rights reserved.';
 
 const LEO = {
-  // Short punchy phrases — TTS sounds most natural with 5-8 words
+  // Lion-themed, kid-friendly, punchy — TTS 5-8 words max
   correct:[
-    n=>`Yes! Great job, ${n}!`,
-    n=>`Wow, ${n}! You got it!`,
-    n=>`Nice work, ${n}! Keep going!`,
-    n=>`${n}, you are so smart!`,
-    n=>`That is right! Well done, ${n}!`,
-    n=>`Fantastic, ${n}! You nailed it!`,
-    n=>`Leo is proud of you, ${n}!`,
-    n=>`Correct! You are amazing, ${n}!`,
+    n=>`ROAR! That is right, ${n}!`,
+    n=>`Paw-some work, ${n}!`,
+    n=>`${n} is claw-some!`,
+    n=>`Rawr! You got it, ${n}!`,
+    n=>`Leo roars with joy, ${n}!`,
+    n=>`Fur-real amazing, ${n}!`,
+    n=>`Big lion roar for ${n}!`,
+    n=>`ROAR! ${n} is so smart!`,
   ],
   wrong:[
-    n=>`Almost, ${n}. Try again!`,
-    n=>`Not quite, ${n}. You can do it!`,
-    n=>`Oops! Keep trying, ${n}!`,
-    n=>`Close! One more try, ${n}!`,
-    n=>`Leo believes in you, ${n}!`,
+    n=>`Roar softly. Try again, ${n}!`,
+    n=>`Not yet! Leo believes in you!`,
+    n=>`Oops! Give it another try!`,
+    n=>`Keep going, ${n}! You can do it!`,
   ],
   streak:[
-    n=>`${n} is on a roll!`,
-    n=>`Three in a row! Go, ${n}!`,
-    n=>`${n} is unstoppable today!`,
+    n=>`${n} is on FIRE! ROAR!`,
+    n=>`Three in a row! Go ${n}!`,
+    n=>`Leo cannot stop you, ${n}!`,
+    n=>`ROAR ROAR ROAR! Amazing ${n}!`,
   ],
   celebrate:[
-    n=>`${n} finished! Leo is so proud!`,
-    n=>`You did it, ${n}! Amazing job!`,
-    n=>`Well done, ${n}! Leo cheers for you!`,
-    n=>`Great game, ${n}! You are a star!`,
+    n=>`ROAR! ${n} finished! Amazing!`,
+    n=>`Leo does a happy lion dance, ${n}!`,
+    n=>`Paw-some game, ${n}! You rocked it!`,
+    n=>`${n}, Leo is so proud! ROAR!`,
   ],
   perfect:[
-    n=>`Perfect score! ${n} is a legend!`,
-    n=>`Every answer right! Wow, ${n}!`,
-    n=>`${n}, you are incredible today!`,
+    n=>`ROAR! Perfect score, ${n}!`,
+    n=>`Every single one right! ${n} is a lion!`,
+    n=>`Leo is speechless! Perfect, ${n}!`,
   ],
   welcome:[
-    n=>`Hi ${n}! Ready to learn?`,
-    n=>`Welcome back, ${n}! Leo missed you!`,
-    n=>`Hey ${n}! Let us learn together!`,
+    n=>`ROAR! Hi ${n}! Ready to learn?`,
+    n=>`Hey ${n}! Leo is ready to roar!`,
+    n=>`Welcome back, ${n}! Let us go!`,
   ],
   hint:[
-    `Look at the choices carefully!`,
-    `Think about it. You know this!`,
-    `The answer is right there. Look!`,
+    `Look closely! Leo thinks you know this!`,
+    `The answer is hiding there. Find it!`,
+    `Take your time. Leo believes in you!`,
   ],
   start:[
-    g=>`${g} is so fun. Let us go!`,
-    g=>`Leo loves ${g}. Here we go!`,
-    g=>`${g} time! You have got this!`,
+    g=>`ROAR! Let us do ${g}!`,
+    g=>`Leo loves ${g}! Here we go!`,
+    g=>`${g} time! Lion paws ready!`,
   ]
 };
 
@@ -1768,10 +2127,13 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
   const bb=document.getElementById('back-btn');
   bb.classList.toggle('vis', id!=='s-welcome');
-  const games=['counting','addition','shapes','compare','letters','words','colors','animals','weather','experiment'];
+  const games=['counting','addition','shapes','compare','letters','words','colors','animals','weather','experiment','coins','patterns','onemore','space','physics','bodyscience','nature','rhymes','phonics','geography','flags','directions','landmarks','music','colormix','time','calendar','money','sorting'];
   const funGames=['bball','puzzle','balloon','baseball','checkers','chess'];
   const isGame=games.some(g=>'s-'+g===id)||funGames.some(g=>'s-'+g===id);
   document.getElementById('global-speak').style.visibility=isGame?'visible':'hidden';
+  // Show footer on welcome + hub screens
+  const footer=document.getElementById('app-footer');
+  if(footer) footer.classList.toggle('show', id==='s-welcome'||id==='s-hub');
 }
 function goBack(){
   sndClick();
@@ -1793,6 +2155,7 @@ function goToHub(){
   document.getElementById('hub-buddy').textContent=THEMES[APP.theme].buddy;
   document.getElementById('hub-title').textContent=`Hi ${APP.playerName}! What shall we learn?`;
   document.getElementById('hub-sub').textContent=`Stars: ${APP.stars} · ${APP.streak>=3?APP.streak+' streak! Keep it up!':'Keep going!'}`;
+  stopSmartHUD();
   showScreen('s-hub');
   refreshFunZone();
   refreshHubSubjects();
@@ -1875,12 +2238,15 @@ function showBreakScreen(){
 function launch(game){
   sndClick();
   const s=getSettings();
-  const blocked={'counting':'math','addition':'math','shapes':'math','compare':'math','letters':'reading','words':'reading','colors':'science','animals':'science','weather':'science','experiment':'science'};
+  const blocked={'counting':'math','addition':'math','shapes':'math','compare':'math','letters':'reading','words':'reading','colors':'science','animals':'science','weather':'science','experiment':'science','coins':'math','patterns':'math','onemore':'math','space':'science','physics':'science','bodyscience':'science','nature':'science','rhymes':'reading','phonics':'reading','geography':'world','flags':'world','directions':'world','landmarks':'world','music':'arts','colormix':'arts','time':'life','calendar':'life','money':'life','sorting':'life'};
   const subj=blocked[game];
-  if(s[subj]===false){speak('This subject is turned off. Ask a parent to enable it.');return;}
+  const knownSubj=['math','reading','science'];if(knownSubj.includes(subj)&&s[subj]===false){speak('This subject is turned off. Ask a parent to enable it.');return;}
   APP.game=game; APP.qNum=0; APP.correct=0; APP.canAnswer=true;
   APP.bonusStars=0; APP.firstTry=true; APP.streakMilestones=[];
-  APP.challengeMode=false;
+  APP.challengeMode=false; APP.usedQ=new Set();
+  const tqMap={'coins':8,'patterns':6,'onemore':8,'space':8,'physics':8,'bodyscience':8,'nature':8,'rhymes':8,'phonics':8,'geography':8,'flags':8,'directions':8,'landmarks':6,'music':8,'colormix':6,'time':8,'calendar':8,'money':8,'sorting':8};
+  if(tqMap[game]) APP.totalQ=tqMap[game];
+  startSmartHUD();
   setProgress(); genQ();
   showScreen('s-'+game);
 }
@@ -1946,6 +2312,8 @@ function _chalAward(btn){
 
 function onAnswer(isCorrect, btn){
   if(!APP.canAnswer)return; APP.canAnswer=false;
+  // Update SmartScore
+  updateSmartScore(isCorrect);
   // Stop challenge timer
   if(APP.challengeMode) _stopChalTimer();
   const g=APP.game;
@@ -1955,27 +2323,27 @@ function onAnswer(isCorrect, btn){
     if(APP.challengeMode){
       sndOk(); _chalAward(btn);
       if(btn)btn.classList.add('correct');
-      const msgs=['DOUBLE STARS! Challenge mastered!','Incredible! You are unstoppable!','ROAR! Leo is losing his mind!','Perfect! The challenge bows to you!'];
+      const msgs=['DOUBLE STARS!','Unstoppable!','ROAR! Challenge!','Perfect!'];
       fb.textContent=pick(msgs); fb.className='fb-bar show good';
-      setTimeout(()=>leoSpeak('correct'),100);
+      setTimeout(()=>maybeLeoCorrect(false),100);
     } else {
       sndOk(); APP.stars++; APP.correct++; APP.streak++;
       if(btn)btn.classList.add('correct');
       _checkStreakBonuses();
       const isStreak=APP.streak>=3;
-      fb.textContent=pick(['Leo says: Amazing!','Leo cheers for you!','Leo roars with joy!','Leo says: Correct!','Leo thinks you are brilliant!','Leo\'s favourite answer!']);
+      fb.textContent=pick(['✓ Correct!','✓ Nice one!','✓ Right!','✓ Yes!','✓ Paw-some!','✓ ROAR!']);
       fb.className='fb-bar show good';
       starPop(btn); updateTopBar(); updatePlayerStars(APP.playerName,1);
-      setTimeout(()=>leoSpeak(isStreak?'streak':'correct'),100);
+      setTimeout(()=>maybeLeoCorrect(isStreak),100);
     }
   } else {
     sndNo(); APP.streak=0; APP.firstTry=false;
     if(APP.challengeMode) APP.chalMulti=1; // reset multiplier on wrong
     if(btn)btn.classList.add('wrong');
-    fb.textContent=pick(['Leo says: close! Try the next one.','Leo believes in you! Keep going!','Leo says: almost there! Do not give up!']);
+    fb.textContent=pick(['Not quite — try the next one!','Almost! Keep going!','Give it another shot!']);
     fb.className='fb-bar show bad';
     updateTopBar();
-    setTimeout(()=>leoSpeak('wrong'),100);
+    setTimeout(()=>maybeLeoWrong(),100);
   }
   nx.classList.add('show');
 }
@@ -1998,19 +2366,19 @@ function onCmpAnswer(clicked,other,isCorrect){
       clicked.classList.add('right');
       _checkStreakBonuses();
       const isStreak=APP.streak>=3;
-      fb.textContent=pick(['Leo roars: Yes!','Leo jumps for joy!','Leo says: Correct!']);
+      fb.textContent=pick(['✓ Yes!','✓ Correct!','✓ Right!']);
       fb.className='fb-bar show good';
       starPop(clicked); updateTopBar(); updatePlayerStars(APP.playerName,1);
-      setTimeout(()=>leoSpeak(isStreak?'streak':'correct'),100);
+      setTimeout(()=>maybeLeoCorrect(isStreak),100);
     }
   }else{
     sndNo();APP.streak=0;APP.firstTry=false;
     if(APP.challengeMode)APP.chalMulti=1;
     clicked.classList.add('wrong-c');
     setTimeout(()=>other.classList.add('show-r'),280);
-    fb.textContent=pick(['Leo says: not quite!','Leo believes in you!']);
+    fb.textContent=pick(['Not quite!','Try again!']);
     fb.className='fb-bar show bad'; updateTopBar();
-    setTimeout(()=>leoSpeak('wrong'),100);
+    setTimeout(()=>maybeLeoWrong(),100);
   }
   nx.classList.add('show');
 }
@@ -2065,6 +2433,7 @@ function celebrate(){
     chalBtn.style.display='none';
   }
 
+  stopSmartHUD();
   showScreen('s-celebrate');
   setTimeout(()=>leoSpeak(isPerfect?'perfect':'celebrate'),400);
 }
@@ -2202,6 +2571,25 @@ function genQ(){
     case 'animals':    genAnimals();    break;
     case 'weather':    genWeather();    break;
     case 'experiment': genExperiment(); break;
+    case 'coins':       genCoins();       break;
+    case 'patterns':    genPatterns();    break;
+    case 'onemore':     genOneMore();     break;
+    case 'space':       genSpace();       break;
+    case 'physics':     genPhysics();     break;
+    case 'bodyscience': genBodyScience(); break;
+    case 'nature':      genNature();      break;
+    case 'rhymes':      genRhymes();      break;
+    case 'phonics':     genPhonics();     break;
+    case 'geography':   genGeography();   break;
+    case 'flags':       genFlags();       break;
+    case 'directions':  genDirections();  break;
+    case 'landmarks':   genLandmarks();   break;
+    case 'music':       genMusic();       break;
+    case 'colormix':    genColorMix();    break;
+    case 'time':        genTime();        break;
+    case 'calendar':    genCalendar();    break;
+    case 'money':       genMoney();       break;
+    case 'sorting':     genSorting();     break;
   }
 }
 
@@ -2230,7 +2618,10 @@ function hintWrong(ansId,correct){
 
 // — COUNTING —
 function genCounting(){
-  const count=ri(1,lv().cMax+1), e=rEmoji();
+  let count,e,_t=0;
+  do{count=ri(1,lv().cMax+1);e=rEmoji();_t++;}
+  while(APP.usedQ&&APP.usedQ.has('ct:'+count+e)&&_t<20);
+  if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('ct:'+count+e);}
   const opts=makeOpts(count,1,lv().cMax+1,3);
   const q=`How many ${e} do you see?`;
   setQ('counting-q',q); clearArea('counting-area'); clearAns('counting-ans');
@@ -2243,7 +2634,10 @@ function genCounting(){
 
 // — ADDITION —
 function genAddition(){
-  const a=ri(1,lv().aA+1),b=ri(1,lv().aB+1),sum=a+b;
+  let a,b,sum,_t=0;
+  do{a=ri(1,lv().aA+1);b=ri(1,lv().aB+1);sum=a+b;_t++;}
+  while(APP.usedQ&&APP.usedQ.has('ad:'+a+'+'+b)&&_t<20);
+  if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('ad:'+a+'+'+b);}
   const eA=rEmoji(); let eB=rEmoji(); while(eB===eA&&THEMES[APP.theme].em.length>1)eB=rEmoji();
   const opts=makeOpts(sum,1,lv().sMax+1,3);
   setQ('addition-q','Count them all together! ➕'); clearArea('addition-area'); clearAns('addition-ans');
@@ -2265,8 +2659,11 @@ function genAddition(){
 // — SHAPES —
 let _lastShape=-1;
 function genShapes(){
-  let idx; do{idx=ri(0,Math.min(SHAPES.length,lv().spools));}while(idx===_lastShape&&SHAPES.length>1);
+  let idx,_t=0;
+  do{idx=ri(0,Math.min(SHAPES.length,lv().spools));_t++;}
+  while((idx===_lastShape||(APP.usedQ&&APP.usedQ.has('sh:'+idx)))&&_t<15);
   _lastShape=idx;
+  if(APP.usedQ){if(_t>=15)APP.usedQ.clear();APP.usedQ.add('sh:'+idx);}
   const correct=SHAPES[idx];
   const pool=shuf(SHAPES.filter((_,i)=>i!==idx&&i<lv().spools));
   const all=shuf([correct,...pool.slice(0,2)]);
@@ -2279,7 +2676,11 @@ function genShapes(){
 
 // — COMPARE —
 function genCompare(){
-  const e=rEmoji(), mode=Math.random()>.5?'BIGGER':'SMALLER';
+  const e=rEmoji();
+  let mode=Math.random()>.5?'BIGGER':'SMALLER';
+  const _ck='cmp:'+mode;
+  if(APP.usedQ&&APP.usedQ.has(_ck)){mode=mode==='BIGGER'?'SMALLER':'BIGGER';}
+  if(APP.usedQ)APP.usedQ.add('cmp:'+mode);
   let sA=ri(50,100),sB;
   do{sB=ri(50,100);}while(Math.abs(sA-sB)<45);
   const bigA=sA>sB, corrA=mode==='BIGGER'?bigA:!bigA;
@@ -2304,8 +2705,8 @@ function mkCmpItem(e,size){
 // — LETTERS —
 let _lastLetter=-1;
 function genLetters(){
-  let idx; do{idx=ri(0,LETTERS.length);}while(idx===_lastLetter&&LETTERS.length>1);
-  _lastLetter=idx;
+  let idx,_lt=0; do{idx=ri(0,LETTERS.length);_lt++;}while((idx===_lastLetter||(APP.usedQ&&APP.usedQ.has('lt:'+idx)))&&_lt<20);
+  _lastLetter=idx;if(APP.usedQ){if(_lt>=20)APP.usedQ.clear();APP.usedQ.add('lt:'+idx);}
   const correct=LETTERS[idx];
   const pool=shuf(LETTERS.filter((_,i)=>i!==idx));
   const opts=shuf([correct,...pool.slice(0,2)]);
@@ -2327,8 +2728,8 @@ function genLetters(){
 // — WORDS —
 let _lastWord=-1;
 function genWords(){
-  let idx; do{idx=ri(0,WORDS.length);}while(idx===_lastWord&&WORDS.length>1);
-  _lastWord=idx;
+  let idx,_wdt=0; do{idx=ri(0,WORDS.length);_wdt++;}while((idx===_lastWord||(APP.usedQ&&APP.usedQ.has('wd:'+idx)))&&_wdt<20);
+  _lastWord=idx;if(APP.usedQ){if(_wdt>=20)APP.usedQ.clear();APP.usedQ.add('wd:'+idx);}
   const item=WORDS[idx],opts=shuf([item.w,...item.x]);
   setQ('words-q','What word matches this picture? 👆');
   document.getElementById('words-area').innerHTML=`<div style="font-size:min(5.5rem,22vw);animation:pop-in .4s ease both">${item.e}</div>`;
@@ -2340,8 +2741,8 @@ function genWords(){
 // — ANIMALS (Science: sounds + habitats) —
 let _lastAnimal=-1;
 function genAnimals(){
-  let idx; do{idx=ri(0,ANIMALS.length);}while(idx===_lastAnimal&&ANIMALS.length>1);
-  _lastAnimal=idx;
+  let idx,_ant=0; do{idx=ri(0,ANIMALS.length);_ant++;}while((idx===_lastAnimal||(APP.usedQ&&APP.usedQ.has('an:'+idx)))&&_ant<20);
+  _lastAnimal=idx;if(APP.usedQ){if(_ant>=20)APP.usedQ.clear();APP.usedQ.add('an:'+idx);}
   const a=ANIMALS[idx];
   const mode=ri(0,2); // 0=sound, 1=habitat
   const area=document.getElementById('animals-area'); area.innerHTML='';
@@ -2363,8 +2764,8 @@ function genAnimals(){
 // — WEATHER (Science) —
 let _lastWeather=-1;
 function genWeather(){
-  let idx; do{idx=ri(0,WEATHER.length);}while(idx===_lastWeather&&WEATHER.length>1);
-  _lastWeather=idx;
+  let idx,_wt=0; do{idx=ri(0,WEATHER.length);_wt++;}while((idx===_lastWeather||(APP.usedQ&&APP.usedQ.has('wt:'+idx)))&&_wt<20);
+  _lastWeather=idx;if(APP.usedQ){if(_wt>=20)APP.usedQ.clear();APP.usedQ.add('wt:'+idx);}
   const w=WEATHER[idx];
   const mode=ri(0,2); // 0 = name the weather, 1 = question
   const area=document.getElementById('weather-area'); area.innerHTML='';
@@ -2387,8 +2788,8 @@ function genWeather(){
 // — EXPERIMENTS (Science: sink/float + hot/cold) —
 let _lastExp=-1;
 function genExperiment(){
-  let idx; do{idx=ri(0,EXPERIMENTS.length);}while(idx===_lastExp&&EXPERIMENTS.length>1);
-  _lastExp=idx;
+  let idx,_et=0; do{idx=ri(0,EXPERIMENTS.length);_et++;}while((idx===_lastExp||(APP.usedQ&&APP.usedQ.has('ex:'+idx)))&&_et<20);
+  _lastExp=idx;if(APP.usedQ){if(_et>=20)APP.usedQ.clear();APP.usedQ.add('ex:'+idx);}
   const ex=EXPERIMENTS[idx];
   const isSinkFloat=ex.result==='sink'||ex.result==='float';
   setQ('experiment-q',ex.q);
@@ -2423,8 +2824,8 @@ function starPop(btn){
 // — COLORS —
 let _lastColor=-1;
 function genColors(){
-  let idx; do{idx=ri(0,COLORS.length);}while(idx===_lastColor&&COLORS.length>1);
-  _lastColor=idx;
+  let idx,_clrt=0; do{idx=ri(0,COLORS.length);_clrt++;}while((idx===_lastColor||(APP.usedQ&&APP.usedQ.has('cl:'+idx)))&&_clrt<20);
+  _lastColor=idx;if(APP.usedQ){if(_clrt>=20)APP.usedQ.clear();APP.usedQ.add('cl:'+idx);}
   const correct=COLORS[idx];
   const pool=shuf(COLORS.filter((_,i)=>i!==idx));
   const opts=shuf([correct,...pool.slice(0,2)]);
@@ -3110,6 +3511,883 @@ updateTopBar();
 updateMuteBtn();
 refreshHubSubjects();
 startTimer();
+
+// ══════════════════════════════════════════════
+//  LEO VOICE THROTTLE — avoid constant chatter
+// ══════════════════════════════════════════════
+let _leoCooldown=0;
+function maybeLeoCorrect(isStreak){
+  if(isStreak){leoSpeak('streak');_leoCooldown=0;return;}
+  // Speak on correct ~35% of the time
+  if(Math.random()<0.35){leoSpeak('correct');_leoCooldown=3;}
+}
+function maybeLeoWrong(){
+  // Speak on wrong ~50% of the time
+  if(Math.random()<0.5) leoSpeak('wrong');
+}
+
+// ══════════════════════════════════════════════
+//  SMART HUD
+// ══════════════════════════════════════════════
+let _hudTimer=null, _hudSecs=0, _smartScore=0;
+
+function startSmartHUD(){
+  _hudSecs=0; _smartScore=0;
+  clearInterval(_hudTimer);
+  _hudTimer=setInterval(()=>{
+    _hudSecs++;
+    const m=Math.floor(_hudSecs/60), s=_hudSecs%60;
+    const el=document.getElementById('hud-time');
+    if(el) el.textContent=m+':'+(s<10?'0'+s:s);
+    const qEl=document.getElementById('hud-qs');
+    if(qEl) qEl.textContent=APP.qNum;
+  },1000);
+  document.getElementById('smart-hud').classList.add('show');
+  renderSmartScore();
+}
+function stopSmartHUD(){
+  clearInterval(_hudTimer);
+  document.getElementById('smart-hud').classList.remove('show');
+}
+function updateSmartScore(isCorrect){
+  if(isCorrect){
+    const bonus = APP.firstTry ? 12 : 7;
+    const speedBonus = _hudSecs < 5 ? 3 : 0;
+    _smartScore=Math.min(100, _smartScore+bonus+speedBonus);
+  } else {
+    _smartScore=Math.max(0, _smartScore-6);
+  }
+  renderSmartScore();
+}
+function renderSmartScore(){
+  const sv=document.getElementById('hud-score-val');
+  const ring=document.getElementById('ss-ring');
+  if(!sv||!ring) return;
+  sv.textContent=_smartScore;
+  const deg=Math.round((_smartScore/100)*360);
+  const col=_smartScore>=80?'var(--green)':_smartScore>=50?'var(--orange)':'var(--blue)';
+  ring.style.background=`conic-gradient(${col} ${deg}deg, #EEE ${deg}deg)`;
+  sv.style.color=col;
+}
+
+// ══════════════════════════════════════════════
+//  FOOTER PAGES
+// ══════════════════════════════════════════════
+const FOOTER_PAGES={
+  about:{
+    title:'🦁 About Learnly',
+    body:`<p>Learnly is a fun, free learning app built for curious kids ages 3–8. With Leo the Lion as your guide, children explore math, reading, science, and more through interactive games designed to build confidence one question at a time.</p>
+<h4>Our Mission</h4>
+<p>We believe every child learns differently. Learnly adapts to each child's level, celebrates progress, and keeps learning joyful — no pressure, no ads, no accounts needed.</p>
+<h4>Who Made It?</h4>
+<p>Learnly was lovingly built by a parent who wanted something better for their own child. It's a passion project made with the latest web technology — completely free to use.</p>
+<h4>Version</h4>
+<p>Version 1.1.0 · Updated 2025</p>`
+  },
+  privacy:{
+    title:'🔒 Privacy Policy',
+    body:`<h4>Your Data Stays on Your Device</h4>
+<p>All data — names, scores, and progress — is stored <em>only on this device</em> using your browser's localStorage. Nothing is sent to any server, ever.</p>
+<h4>No Accounts Required</h4>
+<p>No email, password, or personal information is needed to use Learnly.</p>
+<h4>Children's Privacy (COPPA)</h4>
+<p>Learnly is designed for children under 13. We collect no personal information. No internet connection is required to play. No analytics or tracking code is included.</p>
+<h4>GDPR (EU Users)</h4>
+<p>No personal data leaves your device. There is nothing to request, export, or delete beyond clearing your browser's localStorage.</p>
+<h4>Data Deletion</h4>
+<p>Parents can delete all data at any time via Parent Settings → Reset ALL data.</p>
+<h4>Contact</h4>
+<p>Questions? Email us at hello@learnly.app</p>`
+  },
+  terms:{
+    title:'📋 Terms of Service',
+    body:`<h4>Personal Use</h4>
+<p>Learnly is provided for personal, educational, non-commercial use. It is free to use as-is.</p>
+<h4>Intellectual Property</h4>
+<p>All content, characters (including Leo the Lion), names, branding, and game logic are original works of Learnly. You may not copy, redistribute, sell, or create derivative works without written permission.</p>
+<h4>No Warranty</h4>
+<p>This app is provided "as is" without warranty of any kind. Educational outcomes are not guaranteed.</p>
+<h4>Changes</h4>
+<p>We may update these terms at any time. Continued use of the app constitutes acceptance of the updated terms.</p>
+<h4>Governing Law</h4>
+<p>These terms are governed by the laws of the State of Florida, USA.</p>`
+  },
+  help:{
+    title:'❓ Help & FAQ',
+    body:`<h4>How do I start playing?</h4>
+<p>Tap "Let's Go!" on the main screen, enter your name, and pick any activity card. Leo the Lion will guide you through!</p>
+<h4>What is the SmartScore?</h4>
+<p>The SmartScore (0–100) tracks how well you're doing right now. It goes up when you answer correctly — especially fast! It goes down a little for wrong answers. Try to reach 100!</p>
+<h4>How do I unlock Fun Zone games?</h4>
+<p>Earn stars by completing learning activities. Each Fun Zone game unlocks at a star milestone (Slide Puzzle at 10⭐, Basketball at 25⭐, etc.)</p>
+<h4>What are Challenge Rounds?</h4>
+<p>Challenge Rounds are timed speed rounds. Answer quickly to earn multiplier bonuses! Access them from Parent Settings or look for the ⚡ button.</p>
+<h4>Can multiple kids use the same device?</h4>
+<p>Yes! Go to Parent Settings → Manage Players to add up to 4 children, each with their own stars and progress.</p>
+<h4>How do I change the difficulty?</h4>
+<p>Parent Settings → Adjust Level. Levels range from Toddler to Grade 5.</p>
+<h4>Is there a free version?</h4>
+<p>Learnly is completely free — no in-app purchases, no subscriptions, no ads.</p>
+<h4>Still need help?</h4>
+<p>Email us at hello@learnly.app — we'd love to hear from you!</p>`
+  },
+  contact:{
+    title:'✉️ Contact Us',
+    body:`<h4>We'd Love to Hear from You!</h4>
+<p>Whether you have a question, a bug to report, or just want to say hi — we're here.</p>
+<h4>Email</h4>
+<p><strong>hello@learnly.app</strong></p>
+<h4>Feedback & Ideas</h4>
+<p>Have a game idea? A subject you'd like added? We build Learnly based on feedback from real families. Your ideas make the app better for everyone.</p>
+<h4>Report a Bug</h4>
+<p>Found something broken? Please tell us what happened and what device you're using. We fix bugs fast.</p>
+<h4>Response Time</h4>
+<p>We aim to respond to all messages within 2 business days.</p>`
+  }
+};
+
+function showFooterPage(page){
+  const p=FOOTER_PAGES[page];
+  if(!p) return;
+  document.getElementById('fmc-title').textContent=p.title;
+  document.getElementById('fmc-body').innerHTML=p.body;
+  document.getElementById('footer-modal').classList.add('show');
+}
+function closeFooterModal(){
+  document.getElementById('footer-modal').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════
+//  COIN WORLD
+// ══════════════════════════════════════════════
+const COINS=[
+  {name:'Penny',  value:'1¢',  cls:'coin-penny',  emoji:'🪙', fact:'Lincoln is on the penny!',  worth:1},
+  {name:'Nickel', value:'5¢',  cls:'coin-nickel', emoji:'🪙', fact:'Jefferson is on the nickel!', worth:5},
+  {name:'Dime',   value:'10¢', cls:'coin-dime',   emoji:'🪙', fact:'The dime is the smallest coin!', worth:10},
+  {name:'Quarter',value:'25¢', cls:'coin-quarter',emoji:'🪙', fact:'Washington is on the quarter!', worth:25},
+];
+const COIN_MODES=['name','value','worth'];
+
+function genCoins(){
+  const area=document.getElementById('coins-area');
+  const ans=document.getElementById('coins-ans');
+  area.innerHTML=''; ans.innerHTML='';
+
+  let coin,mode,_ct=0;
+  do{coin=pick(COINS);mode=pick(COIN_MODES);_ct++;}
+  while(APP.usedQ&&APP.usedQ.has('co:'+coin.name+mode)&&_ct<15);
+  if(APP.usedQ){if(_ct>=15)APP.usedQ.clear();APP.usedQ.add('co:'+coin.name+mode);}
+  let qText, correct, options;
+
+  const div=document.createElement('div');
+  div.className='coin-display';
+  const visual=document.createElement('div');
+  visual.className='coin-visual '+coin.cls;
+  visual.innerHTML='<span style="position:relative;z-index:1">'+coin.emoji+'</span>';
+  const lbl=document.createElement('div');
+  lbl.className='coin-label';
+
+  if(mode==='name'){
+    qText='What coin is this?';
+    correct=coin.name;
+    options=shuf(COINS.map(c=>c.name)).slice(0,4);
+    if(!options.includes(correct)) options[3]=correct;
+    options=shuf(options);
+    lbl.textContent=coin.value;
+  } else if(mode==='value'){
+    qText='How much is this coin worth?';
+    correct=coin.value;
+    options=shuf(COINS.map(c=>c.value)).slice(0,4);
+    if(!options.includes(correct)) options[3]=correct;
+    options=shuf(options);
+    lbl.textContent=coin.name;
+  } else {
+    qText='Which coin is worth '+coin.value+'?';
+    correct=coin.name;
+    options=shuf(COINS.map(c=>c.name)).slice(0,4);
+    if(!options.includes(correct)) options[3]=correct;
+    options=shuf(options);
+    lbl.textContent='?';
+  }
+
+  div.appendChild(visual);
+  div.appendChild(lbl);
+  area.appendChild(div);
+  setQ('coins-q', qText);
+  _curQ=qText;
+
+  options.forEach(opt=>{
+    const b=mkBtn(opt, ()=>onAnswer(opt===correct, b));
+    b.dataset.v=opt;
+    ans.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  PATTERN PLAY
+// ══════════════════════════════════════════════
+const PATTERN_SETS=[
+  ['🔵','🔴'],['🌟','🌙'],['🐱','🐶'],['🍎','🍌'],
+  ['🟥','🟦'],['🌸','🌻'],['🦁','🐸'],['🎈','⭐'],
+  ['🔺','🔶'],['🐰','🦊'],['🍦','🍓'],['🎵','🎸'],
+];
+const PATTERN_TYPES=[
+  {len:4, fn:(s)=>[s[0],s[1],s[0],s[1],'?'], ans:(s)=>s[0]},  // AB AB ?
+  {len:4, fn:(s)=>[s[0],s[0],s[1],s[0],s[0],'?'], ans:(s)=>s[1]}, // AAB AAB?  -- wait fix
+  {len:4, fn:(s)=>[s[0],s[1],s[1],s[0],s[1],'?'], ans:(s)=>s[1]}, // ABB ABB?
+];
+
+function genPatterns(){
+  const area=document.getElementById('patterns-area');
+  const ans=document.getElementById('patterns-ans');
+  area.innerHTML=''; ans.innerHTML='';
+
+  let set,_pt=0;
+  do{set=pick(PATTERN_SETS);_pt++;}
+  while(APP.usedQ&&APP.usedQ.has('pat:'+set[0]+set[1])&&_pt<15);
+  const a=set[0], b=set[1];
+  if(APP.usedQ){if(_pt>=15)APP.usedQ.clear();APP.usedQ.add('pat:'+a+b);}
+
+  // Build patterns: AB, AAB, ABB randomly
+  const patterns=[
+    {seq:[a,b,a,b,'?'], answer:a, distractors:[b]},
+    {seq:[a,a,b,a,a,'?'], answer:b, distractors:[a]},
+    {seq:[a,b,b,a,b,'?'], answer:b, distractors:[a]},
+    {seq:[a,b,a,b,a,'?'], answer:b, distractors:[a]},
+  ];
+  const p=pick(patterns);
+
+  // Build pattern row
+  const row=document.createElement('div');
+  row.className='pattern-display';
+  p.seq.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='pat-item'+(item==='?'?' blank':'');
+    el.textContent=item==='?'?'?':item;
+    row.appendChild(el);
+  });
+  area.appendChild(row);
+
+  const qText='What comes next in the pattern?';
+  setQ('patterns-q', qText);
+
+  const correct=p.answer;
+  const wrongPool=[...PATTERN_SETS].flat().filter(x=>x!==a&&x!==b);
+  const opts=shuf([correct,...p.distractors,pick(wrongPool),pick(wrongPool)].filter((v,i,arr)=>arr.indexOf(v)===i)).slice(0,4);
+  if(!opts.includes(correct)){opts[3]=correct; opts=shuf(opts);}
+
+  opts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='ans-btn';
+    b.style.fontSize='1.8rem';
+    b.textContent=opt;
+    b.onclick=()=>onAnswer(opt===correct, b);
+    b.dataset.v=opt;
+    ans.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  ONE MORE / ONE LESS
+// ══════════════════════════════════════════════
+function genOneMore(){
+  const area=document.getElementById('onemore-area');
+  const ans=document.getElementById('onemore-ans');
+  area.innerHTML=''; ans.innerHTML='';
+
+  const lvl=APP.level||1;
+  const maxNum=lvl<=2?10:lvl<=4?20:30;
+  let num;
+  let mode=Math.random()>.5?'more':'less';
+
+  if(mode==='more'){
+    let _ot=0;
+    do{num=ri(1,maxNum);_ot++;}while(APP.usedQ&&APP.usedQ.has('om:+'+num)&&_ot<15);
+    if(APP.usedQ){if(_ot>=15)APP.usedQ.clear();APP.usedQ.add('om:+'+num);}
+    const correct=num+1;
+    setQ('onemore-q', 'What is ONE MORE than '+num+'?');
+    _curQ='What is ONE MORE than '+num+'?';
+    const opts=makeOpts(correct, Math.max(0,correct-4), correct+4, 4);
+    const div=document.createElement('div');
+    div.className='onemore-display';
+    const numBox=document.createElement('div');
+    numBox.className='om-number';
+    numBox.textContent=num;
+    const emoji=rEmoji();
+    const objRow=document.createElement('div');
+    objRow.className='om-objects';
+    for(let i=0;i<Math.min(num,10);i++){
+      const o=document.createElement('span');
+      o.className='om-obj';
+      o.textContent=emoji;
+      objRow.appendChild(o);
+    }
+    div.appendChild(numBox);
+    if(num<=10) div.appendChild(objRow);
+    area.appendChild(div);
+    opts.forEach(opt=>{
+      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      b.dataset.v=opt;
+      ans.appendChild(b);
+    });
+  } else {
+    let _ot2=0;
+    do{num=ri(2,maxNum+1);_ot2++;}while(APP.usedQ&&APP.usedQ.has('om:-'+num)&&_ot2<15);
+    if(APP.usedQ){if(_ot2>=15)APP.usedQ.clear();APP.usedQ.add('om:-'+num);}
+    const correct=num-1;
+    setQ('onemore-q','What is ONE LESS than '+num+'?');
+    _curQ='What is ONE LESS than '+num+'?';
+    const opts=makeOpts(correct, Math.max(0,correct-3), correct+4, 4);
+    const div=document.createElement('div');
+    div.className='onemore-display';
+    const numBox=document.createElement('div');
+    numBox.className='om-number';
+    numBox.style.background='linear-gradient(135deg,#E8F5E9,#C8E6C9)';
+    numBox.style.color='var(--green)';
+    numBox.textContent=num;
+    div.appendChild(numBox);
+    area.appendChild(div);
+    opts.forEach(opt=>{
+      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      b.dataset.v=opt;
+      ans.appendChild(b);
+    });
+  }
+}
+
+
+// ══════════════════════════════════════════════
+//  EXPANDED SUBJECTS — DATA CONSTANTS
+// ══════════════════════════════════════════════
+
+const PLANETS = [
+  {n:'Mercury',e:'🟤',order:1,fact:'Closest to the Sun!'},
+  {n:'Venus',  e:'🟡',order:2,fact:'Hottest planet!'},
+  {n:'Earth',  e:'🌍',order:3,fact:'Our home planet!'},
+  {n:'Mars',   e:'🔴',order:4,fact:'The red planet!'},
+  {n:'Jupiter',e:'🟠',order:5,fact:'The biggest planet!'},
+  {n:'Saturn', e:'🪐',order:6,fact:'Has beautiful rings!'},
+  {n:'Uranus', e:'🔵',order:7,fact:'Spins on its side!'},
+  {n:'Neptune',e:'💙',order:8,fact:'Farthest from the Sun!'},
+];
+
+const PHYSICS_Q = [
+  {q:'You push a door to open it. Is that a PUSH or a PULL?', a:'Push', w:['Pull','Both','Neither']},
+  {q:'You pull open a drawer. Is that a PUSH or a PULL?', a:'Pull', w:['Push','Both','Neither']},
+  {q:'A feather and a rock — which is HEAVIER?', a:'Rock', w:['Feather','Same weight','Cannot tell']},
+  {q:'Which sinks in water?', a:'Rock 🪨', w:['Feather 🪶','Leaf 🍃','Balloon 🎈']},
+  {q:'Which floats in water?', a:'Wood 🪵', w:['Metal 🔧','Stone 🪨','Coin 🪙']},
+  {q:'A magnet sticks to which of these?', a:'Iron nail 🔩', w:['Plastic cup','Wooden block','Rubber ball']},
+  {q:'You kick a ball — what force are you using?', a:'Push', w:['Pull','Gravity alone','None']},
+  {q:'Gravity pulls things which way?', a:'Down ⬇️', w:['Up ⬆️','Left ⬅️','Right ➡️']},
+  {q:'Which is LIGHTER?', a:'Feather 🪶', w:['Brick 🧱','Book 📚','Shoe 👟']},
+  {q:'A bicycle is hard to push on a rough road. What causes this?', a:'Friction', w:['Gravity','Magnets','Wind']},
+  {q:'You stretch a rubber band — what type of energy is stored?', a:'Elastic energy', w:['Heat energy','Light energy','Sound energy']},
+  {q:'Which object needs the most force to push?', a:'Heavy box 📦', w:['Tennis ball 🎾','Pencil ✏️','Leaf 🍃']},
+];
+
+const BODY_PARTS = [
+  {e:'🧠',n:'Brain',  fact:'Controls your whole body!', group:'head'},
+  {e:'❤️',n:'Heart',  fact:'Pumps blood around your body!', group:'chest'},
+  {e:'🫁',n:'Lungs',  fact:'Help you breathe!', group:'chest'},
+  {e:'👁️',n:'Eyes',   fact:'Help you see!', group:'head'},
+  {e:'👂',n:'Ears',   fact:'Help you hear!', group:'head'},
+  {e:'👃',n:'Nose',   fact:'Helps you smell!', group:'head'},
+  {e:'🦷',n:'Teeth',  fact:'Help you chew food!', group:'head'},
+  {e:'🦴',n:'Bones',  fact:'Hold your body up!', group:'body'},
+  {e:'💪',n:'Muscles',fact:'Help you move!', group:'body'},
+  {e:'🤲',n:'Hands',  fact:'Help you grab things!', group:'limbs'},
+  {e:'🦵',n:'Legs',   fact:'Help you walk and run!', group:'limbs'},
+  {e:'🦶',n:'Feet',   fact:'Help you stand and balance!', group:'limbs'},
+];
+const BODY_FOOD_Q = [
+  {q:'Which food makes your bones strong?', a:'Milk 🥛', w:['Soda 🥤','Candy 🍬','Chips 🍟']},
+  {q:'Which food is the healthiest snack?', a:'Apple 🍎', w:['Cake 🎂','Chips 🍟','Soda 🥤']},
+  {q:'Which gives you the most energy?', a:'Banana 🍌', w:['Candy 🍬','Cookie 🍪','Soda 🥤']},
+  {q:'What should you drink most to stay healthy?', a:'Water 💧', w:['Soda 🥤','Juice 🧃','Milkshake 🥤']},
+];
+
+const NATURE_DATA = [
+  // Seasons
+  {type:'season', e:'☀️🌻', n:'Summer', clue:'Hot days, swimming, ice cream!', w:['Winter','Spring','Autumn']},
+  {type:'season', e:'❄️⛄', n:'Winter', clue:'Cold, snow, cozy inside!', w:['Summer','Spring','Autumn']},
+  {type:'season', e:'🌸🌷', n:'Spring', clue:'Flowers bloom, baby animals born!', w:['Summer','Winter','Autumn']},
+  {type:'season', e:'🍂🍁', n:'Autumn', clue:'Leaves fall, getting cooler!', w:['Summer','Winter','Spring']},
+  // Plants
+  {type:'plant', e:'🌱', n:'Seed',   clue:'A plant starts here', w:['Leaf','Root','Flower']},
+  {type:'plant', e:'🌿', n:'Leaf',   clue:'Makes food from sunlight', w:['Root','Seed','Stem']},
+  {type:'plant', e:'🌸', n:'Flower', clue:'The colorful part that makes fruit', w:['Root','Stem','Seed']},
+  {type:'plant', e:'🌳', n:'Tree',   clue:'Has a trunk, branches and leaves', w:['Bush','Grass','Vine']},
+  {type:'plant', e:'🍎', n:'Fruit',  clue:'Grows from a flower, has seeds inside', w:['Root','Stem','Leaf']},
+];
+
+const RHYME_DATA = [
+  {word:'CAT',  rhyme:'HAT',  emoji:'🐱', w:['DOG','RUN','BIG']},
+  {word:'TREE', rhyme:'BEE',  emoji:'🌳', w:['CAT','LOG','RUN']},
+  {word:'CAKE', rhyme:'LAKE', emoji:'🎂', w:['CAT','BIRD','FISH']},
+  {word:'STAR', rhyme:'CAR',  emoji:'⭐', w:['MOON','FISH','BALL']},
+  {word:'MOON', rhyme:'SPOON',emoji:'🌙', w:['STAR','SUN','TREE']},
+  {word:'FISH', rhyme:'DISH', emoji:'🐟', w:['BIRD','FROG','TREE']},
+  {word:'KING', rhyme:'RING', emoji:'👑', w:['QUEEN','BIRD','BALL']},
+  {word:'FROG', rhyme:'LOG',  emoji:'🐸', w:['BIRD','FISH','STAR']},
+  {word:'RAIN', rhyme:'TRAIN',emoji:'🌧️', w:['SNOW','CLOUD','SUN']},
+  {word:'NIGHT',rhyme:'LIGHT',emoji:'🌙', w:['DAY','DARK','STAR']},
+  {word:'BEAR', rhyme:'CHAIR',emoji:'🐻', w:['LION','FISH','BIRD']},
+  {word:'FOUR', rhyme:'DOOR', emoji:'4️⃣', w:['FIVE','SIX','TREE']},
+];
+
+const PHONICS_DATA = [
+  {l:'B',sound:'buh', eg:'Ball 🏀',  w:['puh','tuh','duh']},
+  {l:'C',sound:'kuh', eg:'Cat 🐱',   w:['buh','suh','tuh']},
+  {l:'D',sound:'duh', eg:'Dog 🐶',   w:['buh','guh','puh']},
+  {l:'F',sound:'fff', eg:'Fish 🐟',  w:['buh','suh','vuh']},
+  {l:'G',sound:'guh', eg:'Goat 🐐',  w:['kuh','buh','duh']},
+  {l:'H',sound:'huh', eg:'Hat 🎩',   w:['buh','tuh','wuh']},
+  {l:'J',sound:'juh', eg:'Jump 🦘',  w:['guh','duh','buh']},
+  {l:'L',sound:'luh', eg:'Lion 🦁',  w:['ruh','buh','nuh']},
+  {l:'M',sound:'mmm', eg:'Moon 🌙',  w:['nuh','buh','puh']},
+  {l:'N',sound:'nuh', eg:'Nest 🪺',  w:['mmm','luh','buh']},
+  {l:'P',sound:'puh', eg:'Pig 🐷',   w:['buh','tuh','duh']},
+  {l:'R',sound:'rrr', eg:'Rain 🌧️', w:['luh','wuh','nuh']},
+  {l:'S',sound:'sss', eg:'Sun ☀️',   w:['fff','zzz','tuh']},
+  {l:'T',sound:'tuh', eg:'Tiger 🐯', w:['duh','puh','buh']},
+  {l:'V',sound:'vvv', eg:'Van 🚐',   w:['fff','buh','wuh']},
+  {l:'W',sound:'wuh', eg:'Whale 🐋', w:['vvv','buh','huh']},
+];
+
+const CONTINENTS = [
+  {n:'Africa',       e:'🌍',clue:'Where lions and elephants live!', w:['Asia','Europe','Australia']},
+  {n:'Asia',         e:'🌏',clue:'The biggest continent!', w:['Africa','Europe','Americas']},
+  {n:'Europe',       e:'🗼',clue:'Where France, Italy and UK are!', w:['Asia','Africa','Australia']},
+  {n:'North America',e:'🗽',clue:'Where the USA and Canada are!', w:['South America','Europe','Asia']},
+  {n:'South America',e:'🌿',clue:'Where the Amazon rainforest is!', w:['North America','Africa','Europe']},
+  {n:'Australia',    e:'🦘',clue:'Home of kangaroos and koalas!', w:['Asia','Europe','Africa']},
+  {n:'Antarctica',   e:'🐧',clue:'Covered in ice and snow!', w:['Africa','Europe','Asia']},
+];
+
+const FLAGS_DATA = [
+  {country:'USA',        flag:'🇺🇸', hint:'Red, white and blue with stars'},
+  {country:'UK',         flag:'🇬🇧', hint:'The Union Jack'},
+  {country:'France',     flag:'🇫🇷', hint:'Blue, white and red stripes'},
+  {country:'Japan',      flag:'🇯🇵', hint:'Red circle on white'},
+  {country:'Canada',     flag:'🇨🇦', hint:'Red maple leaf'},
+  {country:'Brazil',     flag:'🇧🇷', hint:'Green with yellow diamond'},
+  {country:'Australia',  flag:'🇦🇺', hint:'Blue with Southern Cross stars'},
+  {country:'Germany',    flag:'🇩🇪', hint:'Black, red and gold stripes'},
+  {country:'Italy',      flag:'🇮🇹', hint:'Green, white and red stripes'},
+  {country:'China',      flag:'🇨🇳', hint:'Red with yellow stars'},
+  {country:'India',      flag:'🇮🇳', hint:'Orange, white and green'},
+  {country:'Mexico',     flag:'🇲🇽', hint:'Green, white and red with eagle'},
+];
+
+const DIRECTIONS_Q = [
+  {q:'The sun rises in the ___?',         a:'East',  w:['West','North','South']},
+  {q:'The sun sets in the ___?',          a:'West',  w:['East','North','South']},
+  {q:'If you face sunrise and stretch arms, your right hand points ___?', a:'South', w:['North','East','West']},
+  {q:'On a map, up is usually ___?',      a:'North', w:['South','East','West']},
+  {q:'On a map, down is usually ___?',    a:'South', w:['North','East','West']},
+  {q:'How many main directions are there?',a:'4',    w:['2','6','8']},
+  {q:'What tool helps you find directions?',a:'Compass 🧭',w:['Ruler 📏','Scale ⚖️','Clock 🕐']},
+  {q:'North and South are ___?',          a:'Opposite',w:['The same','Next to each other','Underground']},
+];
+
+const LANDMARKS_DATA = [
+  {name:'Eiffel Tower',    e:'🗼',country:'France 🇫🇷',   w:['UK','Germany','Italy']},
+  {name:'Statue of Liberty',e:'🗽',country:'USA 🇺🇸',     w:['Canada','UK','France']},
+  {name:'Great Wall',      e:'🏯',country:'China 🇨🇳',    w:['Japan','India','Korea']},
+  {name:'Big Ben',         e:'🕰️',country:'UK 🇬🇧',      w:['France','Germany','Italy']},
+  {name:'Colosseum',       e:'🏛️',country:'Italy 🇮🇹',   w:['Greece','Spain','France']},
+  {name:'Pyramids',        e:'🔺',country:'Egypt 🇪🇬',    w:['Morocco','Jordan','Libya']},
+];
+
+const MUSIC_DATA = [
+  {q:'How many beats are in a typical measure?', a:'4', w:['2','6','8']},
+  {q:'Which instrument has black and white keys?', a:'Piano 🎹', w:['Guitar 🎸','Drum 🥁','Violin 🎻']},
+  {q:'Which instrument do you blow into?', a:'Flute 🎶', w:['Piano 🎹','Guitar 🎸','Drum 🥁']},
+  {q:'Which is the highest singing voice?', a:'Soprano', w:['Bass','Alto','Tenor']},
+  {q:'A song with a fast tempo is called ___?', a:'Upbeat / fast', w:['Slow','Quiet','Soft']},
+  {q:'Which symbol tells you to get LOUDER?', a:'Crescendo (<)', w:['Rest','Sharp','Flat']},
+  {q:'What do we call a group of musicians?', a:'Orchestra 🎻', w:['Team','Choir 🎤','Both orchestra and choir']},
+  {q:'How many notes are in a musical scale?', a:'8 (Do Re Mi…)', w:['5','10','12']},
+  {q:'Which instrument makes sound by hitting?', a:'Drum 🥁', w:['Flute 🎶','Violin 🎻','Trumpet 🎺']},
+  {q:'What is a song called that does not have words?', a:'Instrumental', w:['Vocal','Opera','Jazz']},
+];
+
+const COLORMIX_DATA = [
+  {q:'Red + Blue = ?',    a:'Purple 🟣', w:['Green 🟢','Orange 🟠','Pink 🩷']},
+  {q:'Blue + Yellow = ?', a:'Green 🟢',  w:['Purple 🟣','Orange 🟠','Brown 🟤']},
+  {q:'Red + Yellow = ?',  a:'Orange 🟠', w:['Purple 🟣','Green 🟢','Pink 🩷']},
+  {q:'Red + White = ?',   a:'Pink 🩷',   w:['Purple 🟣','Orange 🟠','Yellow 🟡']},
+  {q:'All colors together = ?', a:'Brown / Black', w:['White','Pink','Yellow']},
+  {q:'Blue + White = ?',  a:'Light Blue 🩵',w:['Purple 🟣','Green 🟢','Grey']},
+];
+
+const TIME_HOURS = [1,2,3,4,5,6,7,8,9,10,11,12];
+const CALENDAR_DATA = {
+  days:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+  months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+  seasons:{Spring:['March','April','May'],Summer:['June','July','August'],Autumn:['September','October','November'],Winter:['December','January','February']}
+};
+
+const SORTING_GROUPS = [
+  {group:'Animals 🐾',    items:['Cat 🐱','Dog 🐶','Bird 🐦'],    wrong:['Apple 🍎','Car 🚗','Chair 🪑']},
+  {group:'Fruits 🍎',     items:['Apple 🍎','Banana 🍌','Grape 🍇'],wrong:['Dog 🐶','Chair 🪑','Pencil ✏️']},
+  {group:'Vehicles 🚗',   items:['Car 🚗','Bus 🚌','Truck 🚚'],   wrong:['Apple 🍎','Cat 🐱','Book 📚']},
+  {group:'Clothes 👕',    items:['Shirt 👕','Hat 🎩','Shoe 👟'],   wrong:['Fish 🐟','Tree 🌳','Ball 🏀']},
+  {group:'School things 📚',items:['Book 📚','Pencil ✏️','Ruler 📏'],wrong:['Dog 🐶','Apple 🍎','Car 🚗']},
+  {group:'Foods 🍕',      items:['Pizza 🍕','Bread 🍞','Rice 🍚'], wrong:['Dog 🐶','Car 🚗','Tree 🌳']},
+];
+
+// ══════════════════════════════════════════════
+//  EXPANDED SUBJECT GENERATORS
+// ══════════════════════════════════════════════
+
+function _simpleQ(game,qText,correct,wrongs){
+  const g=game; clearArea(g+'-area'); clearArea(g+'-ans');
+  setQ(g+'-q',qText);
+  const opts=shuf([correct,...wrongs.slice(0,3)]);
+  const ans=document.getElementById(g+'-ans');
+  opts.forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText);
+}
+function _emojiQ(game,emoji,qText,correct,wrongs){
+  const area=document.getElementById(game+'-area');
+  clearArea(game+'-area'); clearArea(game+'-ans');
+  const d=document.createElement('div');
+  d.style.cssText='font-size:5rem;text-align:center;width:100%;animation:item-pop .3s ease';
+  d.textContent=emoji; area.appendChild(d);
+  _simpleQ(game,qText,correct,wrongs);
+}
+
+// SPACE
+let _lastPlanet=-1;
+function genSpace(){
+  let idx,_t=0;
+  do{idx=ri(0,PLANETS.length);_t++;}while((idx===_lastPlanet||(APP.usedQ&&APP.usedQ.has('sp:'+idx)))&&_t<20);
+  _lastPlanet=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('sp:'+idx);}
+  const p=PLANETS[idx];
+  const mode=pick(['name','order','fact']);
+  let qText,correct,wrongs;
+  if(mode==='name'||mode==='fact'){
+    qText=mode==='name'?'What planet is this?':'What is a fact about '+p.n+'?';
+    correct=mode==='name'?p.n:p.fact;
+    wrongs=mode==='name'?shuf(PLANETS.filter((_,i)=>i!==idx).map(x=>x.n)).slice(0,3)
+                        :shuf(PLANETS.filter((_,i)=>i!==idx).map(x=>x.fact)).slice(0,3);
+  } else {
+    qText='What is the order of '+p.n+' from the Sun?';
+    correct=p.order+'th';if(p.order===1)correct='1st';if(p.order===2)correct='2nd';if(p.order===3)correct='3rd';
+    wrongs=['1st','2nd','3rd','4th','5th','6th','7th','8th'].filter(x=>x!==correct).slice(0,3);
+  }
+  _emojiQ('space',p.e+'  '+p.n,qText,correct,wrongs);
+}
+
+// PHYSICS
+let _lastPhysics=-1;
+function genPhysics(){
+  let idx,_t=0;
+  do{idx=ri(0,PHYSICS_Q.length);_t++;}while((idx===_lastPhysics||(APP.usedQ&&APP.usedQ.has('ph:'+idx)))&&_t<20);
+  _lastPhysics=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('ph:'+idx);}
+  const q=PHYSICS_Q[idx];
+  _simpleQ('physics',q.q,q.a,shuf(q.w));
+}
+
+// BODY SCIENCE
+let _lastBody=-1;
+function genBodyScience(){
+  if(Math.random()<0.35&&BODY_FOOD_Q.length){
+    const q=pick(BODY_FOOD_Q);
+    _simpleQ('bodyscience',q.q,q.a,shuf(q.w));
+    return;
+  }
+  let idx,_t=0;
+  do{idx=ri(0,BODY_PARTS.length);_t++;}while((idx===_lastBody||(APP.usedQ&&APP.usedQ.has('bd:'+idx)))&&_t<20);
+  _lastBody=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('bd:'+idx);}
+  const bp=BODY_PARTS[idx];
+  const mode=pick(['name','fact']);
+  const qText=mode==='name'?'What body part is this?':'What does the '+bp.n+' do?';
+  const correct=mode==='name'?bp.n:bp.fact;
+  const wrongs=mode==='name'?shuf(BODY_PARTS.filter((_,i)=>i!==idx).map(x=>x.n)).slice(0,3)
+                             :shuf(BODY_PARTS.filter((_,i)=>i!==idx).map(x=>x.fact)).slice(0,3);
+  _emojiQ('bodyscience',bp.e,qText,correct,wrongs);
+}
+
+// NATURE
+let _lastNature=-1;
+function genNature(){
+  let idx,_t=0;
+  do{idx=ri(0,NATURE_DATA.length);_t++;}while((idx===_lastNature||(APP.usedQ&&APP.usedQ.has('nt:'+idx)))&&_t<20);
+  _lastNature=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('nt:'+idx);}
+  const n=NATURE_DATA[idx];
+  const qText=n.type==='season'?'What season is this?':'What part of a plant is this?';
+  _emojiQ('nature',n.e,n.clue+' — '+qText,n.n,shuf(n.w));
+}
+
+// RHYMES
+let _lastRhyme=-1;
+function genRhymes(){
+  let idx,_t=0;
+  do{idx=ri(0,RHYME_DATA.length);_t++;}while((idx===_lastRhyme||(APP.usedQ&&APP.usedQ.has('rh:'+idx)))&&_t<20);
+  _lastRhyme=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('rh:'+idx);}
+  const r=RHYME_DATA[idx];
+  const area=document.getElementById('rhymes-area'); clearArea('rhymes-area'); clearArea('rhymes-ans');
+  const d=document.createElement('div');
+  d.style.cssText='font-size:4rem;text-align:center;width:100%;line-height:1.2';
+  d.innerHTML=r.emoji+'<br><span style="font-size:2.2rem;font-weight:900;color:var(--blue)">'+r.word+'</span>';
+  area.appendChild(d);
+  const opts=shuf([r.rhyme,...r.w.slice(0,3)]);
+  const ans=document.getElementById('rhymes-ans');
+  const qText='Which word RHYMES with '+r.word+'?';
+  setQ('rhymes-q',qText);
+  opts.forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===r.rhyme,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText+' '+r.word);
+}
+
+// PHONICS
+let _lastPhonics=-1;
+function genPhonics(){
+  let idx,_t=0;
+  do{idx=ri(0,PHONICS_DATA.length);_t++;}while((idx===_lastPhonics||(APP.usedQ&&APP.usedQ.has('fn:'+idx)))&&_t<20);
+  _lastPhonics=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('fn:'+idx);}
+  const ph=PHONICS_DATA[idx];
+  const area=document.getElementById('phonics-area'); clearArea('phonics-area'); clearArea('phonics-ans');
+  const d=document.createElement('div');
+  d.style.cssText='font-size:5rem;font-weight:900;color:var(--purple);text-align:center;width:100%';
+  d.textContent=ph.l; area.appendChild(d);
+  const mode=pick(['sound','example']);
+  let qText,correct,opts;
+  if(mode==='sound'){
+    qText='What sound does the letter '+ph.l+' make?';
+    correct=ph.sound;
+    opts=shuf([correct,...ph.w]);
+  } else {
+    qText='Which word starts with the letter '+ph.l+'?';
+    correct=ph.eg;
+    const otherEgs=shuf(PHONICS_DATA.filter((_,i)=>i!==idx).map(x=>x.eg)).slice(0,3);
+    opts=shuf([correct,...otherEgs]);
+  }
+  setQ('phonics-q',qText);
+  const ans=document.getElementById('phonics-ans');
+  opts.forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText);
+}
+
+// GEOGRAPHY
+let _lastGeo=-1;
+function genGeography(){
+  let idx,_t=0;
+  do{idx=ri(0,CONTINENTS.length);_t++;}while((idx===_lastGeo||(APP.usedQ&&APP.usedQ.has('ge:'+idx)))&&_t<20);
+  _lastGeo=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('ge:'+idx);}
+  const c=CONTINENTS[idx];
+  _emojiQ('geography',c.e,c.clue+' — What continent is this?',c.n,shuf(c.w));
+}
+
+// FLAGS
+let _lastFlag=-1;
+function genFlags(){
+  let idx,_t=0;
+  do{idx=ri(0,FLAGS_DATA.length);_t++;}while((idx===_lastFlag||(APP.usedQ&&APP.usedQ.has('fl:'+idx)))&&_t<20);
+  _lastFlag=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('fl:'+idx);}
+  const f=FLAGS_DATA[idx];
+  const area=document.getElementById('flags-area'); clearArea('flags-area'); clearArea('flags-ans');
+  const d=document.createElement('div');
+  d.style.cssText='font-size:5rem;text-align:center;width:100%;animation:item-pop .3s ease';
+  d.textContent=f.flag; area.appendChild(d);
+  const qText='Which country does this flag belong to?';
+  setQ('flags-q',qText);
+  const wrongCountries=shuf(FLAGS_DATA.filter((_,i)=>i!==idx).map(x=>x.country)).slice(0,3);
+  const opts=shuf([f.country,...wrongCountries]);
+  const ans=document.getElementById('flags-ans');
+  opts.forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===f.country,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText);
+}
+
+// DIRECTIONS
+let _lastDir=-1;
+function genDirections(){
+  let idx,_t=0;
+  do{idx=ri(0,DIRECTIONS_Q.length);_t++;}while((idx===_lastDir||(APP.usedQ&&APP.usedQ.has('di:'+idx)))&&_t<20);
+  _lastDir=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('di:'+idx);}
+  const q=DIRECTIONS_Q[idx];
+  _simpleQ('directions',q.q,q.a,shuf(q.w));
+}
+
+// LANDMARKS
+let _lastLandmark=-1;
+function genLandmarks(){
+  let idx,_t=0;
+  do{idx=ri(0,LANDMARKS_DATA.length);_t++;}while((idx===_lastLandmark||(APP.usedQ&&APP.usedQ.has('lm:'+idx)))&&_t<20);
+  _lastLandmark=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('lm:'+idx);}
+  const lm=LANDMARKS_DATA[idx];
+  _emojiQ('landmarks',lm.e,'The '+lm.name+' is in which country?',lm.country,shuf(lm.w));
+}
+
+// MUSIC
+let _lastMusic=-1;
+function genMusic(){
+  let idx,_t=0;
+  do{idx=ri(0,MUSIC_DATA.length);_t++;}while((idx===_lastMusic||(APP.usedQ&&APP.usedQ.has('mu:'+idx)))&&_t<20);
+  _lastMusic=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('mu:'+idx);}
+  const m=MUSIC_DATA[idx];
+  _simpleQ('music',m.q,m.a,shuf(m.w));
+}
+
+// COLOR MIXING
+let _lastColorMix=-1;
+function genColorMix(){
+  let idx,_t=0;
+  do{idx=ri(0,COLORMIX_DATA.length);_t++;}while((idx===_lastColorMix||(APP.usedQ&&APP.usedQ.has('cm:'+idx)))&&_t<20);
+  _lastColorMix=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('cm:'+idx);}
+  const c=COLORMIX_DATA[idx];
+  _simpleQ('colormix',c.q,c.a,shuf(c.w));
+}
+
+// TELLING TIME
+function genTime(){
+  const hour=pick(TIME_HOURS);
+  const mins=pick([0,15,30,45]);
+  const timeStr=hour+':'+(mins===0?'00':mins);
+  const correct=hour+(mins===0?' o\'clock':':'+mins);
+  const wrongs=shuf(TIME_HOURS.filter(h=>h!==hour)).slice(0,2).map(h=>h+(mins===0?' o\'clock':':'+mins));
+  wrongs.push((hour===12?1:hour+1)+(mins===0?' o\'clock':':'+mins));
+  const area=document.getElementById('time-area'); clearArea('time-area'); clearArea('time-ans');
+  const d=document.createElement('div');
+  d.style.cssText='font-size:3.5rem;font-weight:900;color:var(--blue);text-align:center;width:100%;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:20px;padding:16px';
+  d.textContent='🕐 '+timeStr; area.appendChild(d);
+  const qText='What time does the clock show?';
+  setQ('time-q',qText);
+  const ans=document.getElementById('time-ans');
+  shuf([correct,...wrongs.slice(0,3)]).forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText);
+}
+
+// DAYS & MONTHS (CALENDAR)
+function genCalendar(){
+  const mode=pick(['day_next','day_before','month_next','month_number','season']);
+  const days=CALENDAR_DATA.days, months=CALENDAR_DATA.months;
+  let qText,correct,wrongs;
+  if(mode==='day_next'){
+    const idx=ri(0,days.length);
+    qText='What day comes AFTER '+days[idx]+'?';
+    correct=days[(idx+1)%days.length];
+    wrongs=shuf(days.filter(d=>d!==correct)).slice(0,3);
+  } else if(mode==='day_before'){
+    const idx=ri(1,days.length);
+    qText='What day comes BEFORE '+days[idx]+'?';
+    correct=days[(idx-1+days.length)%days.length];
+    wrongs=shuf(days.filter(d=>d!==correct)).slice(0,3);
+  } else if(mode==='month_next'){
+    const idx=ri(0,months.length);
+    qText='What month comes AFTER '+months[idx]+'?';
+    correct=months[(idx+1)%months.length];
+    wrongs=shuf(months.filter(m=>m!==correct)).slice(0,3);
+  } else if(mode==='month_number'){
+    const idx=ri(0,months.length);
+    qText='Which month number is '+months[idx]+'?';
+    correct=String(idx+1);
+    wrongs=shuf(['1','2','3','4','5','6','7','8','9','10','11','12'].filter(n=>n!==correct)).slice(0,3);
+  } else {
+    const seasons=Object.keys(CALENDAR_DATA.seasons);
+    const s=pick(seasons);
+    const ms=CALENDAR_DATA.seasons[s];
+    qText='Which month is in '+s+'?';
+    correct=pick(ms);
+    wrongs=shuf(months.filter(m=>!ms.includes(m))).slice(0,3);
+  }
+  _simpleQ('calendar',qText,correct,shuf(wrongs));
+}
+
+// MONEY (multi-coin counting)
+function genMoney(){
+  const coinVals=[{n:'penny',v:1,e:'🪙'},{n:'nickel',v:5,e:'🪙'},{n:'dime',v:10,e:'🪙'},{n:'quarter',v:25,e:'🟡'}];
+  const numCoins=ri(2,5);
+  const coins=[];
+  let total=0;
+  for(let i=0;i<numCoins;i++){
+    const c=pick(coinVals.filter(x=>total+x.v<=50));
+    if(!c) break;
+    coins.push(c); total+=c.v;
+  }
+  const area=document.getElementById('money-area'); clearArea('money-area'); clearArea('money-ans');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%;padding:8px';
+  coins.forEach(c=>{
+    const s=document.createElement('span');
+    s.style.cssText='font-size:2rem;background:#FFF3EE;border-radius:12px;padding:6px 10px;font-weight:900';
+    s.textContent=c.e+' '+c.v+'¢'; d.appendChild(s);
+  });
+  area.appendChild(d);
+  const qText='How much money is here in total?';
+  setQ('money-q',qText);
+  const correct=total+'¢';
+  const wrongs=makeOpts(total,Math.max(1,total-20),total+25,4).filter(v=>v!==total).map(v=>v+'¢').slice(0,3);
+  const ans=document.getElementById('money-ans');
+  shuf([correct,...wrongs]).forEach(o=>{
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    b.dataset.v=o; ans.appendChild(b);
+  });
+  speak(qText);
+}
+
+// SORTING
+let _lastSort=-1;
+function genSorting(){
+  let idx,_t=0;
+  do{idx=ri(0,SORTING_GROUPS.length);_t++;}while((idx===_lastSort||(APP.usedQ&&APP.usedQ.has('so:'+idx)))&&_t<20);
+  _lastSort=idx;if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('so:'+idx);}
+  const sg=SORTING_GROUPS[idx];
+  const mode=pick(['belongs','doesnt']);
+  const item=pick(sg.items);
+  const wrongItem=pick(sg.wrong);
+  let qText,correct,wrongs;
+  if(mode==='belongs'){
+    qText='Which belongs in the group: '+sg.group+'?';
+    correct=item;
+    wrongs=shuf([...sg.wrong,...SORTING_GROUPS.filter((_,i)=>i!==idx).flatMap(g=>g.items)]).slice(0,3);
+  } else {
+    qText='Which does NOT belong in: '+sg.group+'?';
+    correct=wrongItem;
+    wrongs=shuf(sg.items).slice(0,3);
+  }
+  _simpleQ('sorting',qText,correct,shuf(wrongs));
+}
+
 </script>
+
+<!-- ════════════ FOOTER INFO MODAL ════════════ -->
+<div id="footer-modal" onclick="if(event.target===this)closeFooterModal()">
+  <div class="footer-modal-card">
+    <div class="fmc-title" id="fmc-title">About Learnly</div>
+    <div class="fmc-body" id="fmc-body"></div>
+    <button class="fmc-close" onclick="closeFooterModal()">Close ✕</button>
+  </div>
+</div>
+
+<!-- ════════════ APP FOOTER ════════════ -->
+<footer id="app-footer">
+  <div class="footer-links">
+    <a onclick="showFooterPage('about')">About</a>
+    <a onclick="showFooterPage('privacy')">Privacy Policy</a>
+    <a onclick="showFooterPage('terms')">Terms of Service</a>
+    <a onclick="showFooterPage('help')">Help &amp; FAQ</a>
+    <a onclick="showFooterPage('contact')">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 Learnly · Made with ❤️ for curious kids · v1.1</div>
+</footer>
+
 </body>
 </html>
