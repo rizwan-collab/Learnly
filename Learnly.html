@@ -90,6 +90,92 @@ body{
 .sl-world{background:linear-gradient(90deg,#1565C0,#42A5F5)}
 .sl-arts{background:linear-gradient(90deg,#AD1457,#F48FB1)}
 .sl-life{background:linear-gradient(90deg,#558B2F,#AED581)}
+
+/* ═══════════════════════════════════
+   VIEW TOGGLE (Grid / Journey)
+═══════════════════════════════════ */
+.view-toggle{
+  display:flex;gap:6px;background:#F0F0F0;
+  border-radius:20px;padding:4px;
+  width:100%;max-width:280px;margin:0 auto 4px;
+}
+.vt-btn{
+  flex:1;padding:8px 0;border:none;border-radius:16px;
+  font-family:inherit;font-size:.88rem;font-weight:900;
+  cursor:pointer;transition:all .18s;background:transparent;color:#888;
+}
+.vt-btn.active{background:white;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.vt-btn:active{transform:scale(.95)}
+
+/* ═══════════════════════════════════
+   JOURNEY MAP
+═══════════════════════════════════ */
+#journey-map{
+  display:none;flex-direction:column;align-items:center;
+  width:100%;max-width:480px;padding:8px 0 80px;gap:0;
+}
+#journey-map.show{display:flex}
+.jpath-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;position:relative;
+}
+.jrow{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:0 24px;margin:2px 0;
+}
+/* alternate nodes left/right for snake feel */
+.jrow:nth-child(4n+1){justify-content:flex-start;padding-left:48px}
+.jrow:nth-child(4n+2){justify-content:center}
+.jrow:nth-child(4n+3){justify-content:flex-end;padding-right:48px}
+.jrow:nth-child(4n+0){justify-content:center}
+
+.jnode{
+  width:76px;height:76px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:1.9rem;gap:1px;
+  border:4px solid #DDD;background:#EFEFEF;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  position:relative;box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.jnode-label{font-size:.55rem;font-weight:900;color:inherit;text-align:center;line-height:1.1;padding:0 4px;max-width:70px}
+.jnode.jdone{
+  background:linear-gradient(135deg,#FFD700,#FFA500);
+  border-color:#E59400;color:white;
+}
+.jnode.jdone .jnode-label{color:white}
+.jnode.jcurrent{
+  background:linear-gradient(135deg,var(--green),#2E7D32);
+  border-color:#1B5E20;color:white;
+  animation:jPulse 1.3s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(76,175,80,.5);
+}
+.jnode.jcurrent .jnode-label{color:white}
+@keyframes jPulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(76,175,80,.5)}
+  50%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(76,175,80,0)}
+}
+.jnode.jlocked{
+  background:#E0E0E0;border-color:#BDBDBD;
+  cursor:default;filter:grayscale(.7);opacity:.7;
+}
+.jnode.jlocked .jnode-label{color:#999}
+.jnode:not(.jlocked):active{transform:scale(.9)}
+/* connector dots between nodes */
+.jdots{
+  width:4px;height:22px;
+  background:repeating-linear-gradient(to bottom,#DDD 0,#DDD 5px,transparent 5px,transparent 10px);
+  margin:0 auto;
+}
+.jdots.done-dots{background:repeating-linear-gradient(to bottom,#FFA500 0,#FFA500 5px,transparent 5px,transparent 10px)}
+/* milestone banner */
+.j-milestone{
+  background:linear-gradient(135deg,var(--purple),#7B1FA2);
+  color:white;border-radius:20px;padding:10px 20px;
+  font-size:.85rem;font-weight:900;text-align:center;
+  margin:8px 0;width:calc(100% - 48px);
+  box-shadow:0 3px 12px rgba(156,39,176,.3);
+}
+
 .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .act-card{border-radius:24px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 6px 18px rgba(0,0,0,.13);position:relative;overflow:hidden;border:none}
 .act-card:active{transform:scale(.92);box-shadow:0 2px 8px rgba(0,0,0,.1)}
@@ -460,6 +546,19 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 .sb-badge{font-size:.72rem;background:#E8F5E9;color:#2E7D32;padding:2px 8px;border-radius:20px;font-weight:900;margin-left:6px}
 
 /* Streak bonus pop animation */
+.badge-pop{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1A1A2E;color:white;border-radius:20px;padding:12px 20px;
+  display:flex;align-items:center;gap:12px;z-index:9999;
+  opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);min-width:220px;max-width:320px;
+}
+.badge-pop.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.bp-icon{font-size:2.2rem;flex-shrink:0}
+.bp-name{font-weight:900;font-size:1rem;color:#FFD23F}
+.bp-desc{font-size:.75rem;color:#CCC;margin-top:2px}
+.merit-pass{color:#2E7D32;font-weight:900;font-size:.9rem;margin-top:6px}
+.merit-fail{color:#C62828;font-weight:900;font-size:.9rem;margin-top:6px}
 .streak-bonus-pop{
   position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
   background:linear-gradient(135deg,#FF6B35,#FF9F53);color:white;
@@ -820,6 +919,18 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
     <div class="hub-sub" id="hub-sub">⭐ 0 stars · 🏆 Tap to see scores</div>
   </div>
 
+  <!-- VIEW TOGGLE -->
+  <div class="view-toggle">
+    <button class="vt-btn active" id="vt-grid" onclick="setHubView('grid')">🗂️ Subjects</button>
+    <button class="vt-btn" id="vt-journey" onclick="setHubView('journey')">🗺️ Journey</button>
+  </div>
+
+  <!-- JOURNEY MAP (hidden by default) -->
+  <div id="journey-map"></div>
+
+  <!-- GRID SUBJECTS (default) -->
+  <div id="hub-grid">
+
   <!-- MATH -->
   <div class="subj-block" id="blk-math">
     <div class="section-label sl-math">🔢 Math</div>
@@ -933,6 +1044,7 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
       </div>
     </div>
   </div>
+  </div><!-- end #hub-grid -->
 </div>
 
 <!-- ════════════ GAME SCREENS (all 7) ════════════ -->
@@ -1644,6 +1756,82 @@ const APP = {
   chalMulti:     1    // current multiplier (increases with streak)
 };
 
+// ══════════════════════════════════════════════
+//  MERIT SYSTEM — Learning earns everything
+// ══════════════════════════════════════════════
+const BADGES = {
+  five_streak:    { name:'5 in a Row!',    e:'🔥', desc:'5 correct answers in a row' },
+  perfect_round:  { name:'Perfect Round!', e:'🌟', desc:'100% on any game' },
+  daily_learner:  { name:'Daily Learner',  e:'📅', desc:'3 days of learning in a row' },
+  sharp_mind:     { name:'Sharp Mind',     e:'🧠', desc:'30 correct answers total' },
+  star_collector: { name:'Star Collector', e:'⭐', desc:'50 stars earned' },
+};
+
+function getMeritData(){
+  try{return JSON.parse(localStorage.getItem('learnly_merit')||'{}');}catch(e){return {};}
+}
+function saveMeritData(d){ localStorage.setItem('learnly_merit', JSON.stringify(d)); }
+
+function recordDailyProgress(correctCount){
+  const m = getMeritData();
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  // Reset today counter if it's a new day
+  if(m.lastCheckDay !== today) m.todayCorrect = 0;
+  m.todayCorrect = (m.todayCorrect||0) + correctCount;
+  m.lastCheckDay = today;
+  // Daily streak: only earns if ≥5 correct answers today
+  if(m.todayCorrect >= 5 && m.lastLearnDay !== today){
+    if(m.lastLearnDay === yesterday){
+      m.dailyStreak = (m.dailyStreak||0) + 1;
+    } else {
+      m.dailyStreak = 1;
+    }
+    m.lastLearnDay = today;
+    if(m.dailyStreak >= 3) _awardBadge('daily_learner', m);
+  }
+  // Star milestone badges
+  if(APP.stars >= 30) _awardBadge('sharp_mind', m);
+  if(APP.stars >= 50) _awardBadge('star_collector', m);
+  saveMeritData(m);
+  _updateMeritHubDisplay();
+}
+
+function checkGameBadges(){
+  const m = getMeritData();
+  let changed = false;
+  if(APP.streak >= 5){ _awardBadge('five_streak', m); changed=true; }
+  if(APP.correct === APP.totalQ && APP.totalQ >= 5){ _awardBadge('perfect_round', m); changed=true; }
+  if(changed) saveMeritData(m);
+}
+
+function _awardBadge(id, m){
+  if(m['badge_'+id]) return; // already earned
+  m['badge_'+id] = Date.now();
+  const b = BADGES[id]; if(!b) return;
+  const div = document.createElement('div');
+  div.className = 'badge-pop';
+  div.innerHTML = `<span class="bp-icon">${b.e}</span><div><div class="bp-name">Badge: ${b.name}</div><div class="bp-desc">${b.desc}</div></div>`;
+  document.body.appendChild(div);
+  setTimeout(()=>div.classList.add('show'), 60);
+  setTimeout(()=>{ div.classList.remove('show'); setTimeout(()=>div.remove(),400); }, 3200);
+  setTimeout(()=>speak('Badge unlocked! '+b.name), 200);
+}
+
+function _updateMeritHubDisplay(){
+  const m = getMeritData();
+  const el = document.getElementById('hub-sub');
+  if(!el) return;
+  const ds = m.dailyStreak||0;
+  const tc = m.todayCorrect||0;
+  const todayStr = tc>0 ? `${tc} correct today` : 'Start learning!';
+  const streakStr = ds>=2 ? ` · 🔥 ${ds}-day streak` : '';
+  el.textContent = `⭐ ${APP.stars} stars · ${todayStr}${streakStr}`;
+}
+
+// ── Merit pass threshold: 60% to advance the journey ──
+function meritPass(){ return APP.correct >= Math.ceil(APP.totalQ * 0.6); }
+
 let _pinBuffer  = '';
 let _pinOnOk    = null;
 
@@ -2154,10 +2342,13 @@ function goToHub(){
   }
   document.getElementById('hub-buddy').textContent=THEMES[APP.theme].buddy;
   document.getElementById('hub-title').textContent=`Hi ${APP.playerName}! What shall we learn?`;
-  document.getElementById('hub-sub').textContent=`Stars: ${APP.stars} · ${APP.streak>=3?APP.streak+' streak! Keep it up!':'Keep going!'}`;
+  _updateMeritHubDisplay();
   stopSmartHUD();
   showScreen('s-hub');
   refreshFunZone();
+  // restore last hub view
+  const savedView = localStorage.getItem('learnly_hubview')||'grid';
+  setTimeout(()=>setHubView(savedView), 50);
   refreshHubSubjects();
   setTimeout(()=>leoSpeak('welcome'),350);
 }
@@ -2419,12 +2610,10 @@ function celebrate(){
   if(streakBonusTotal>0)bdHTML+=`<div class="sb-row"><span class="sb-label">Streak bonus <span class="sb-badge">HOT!</span></span><span class="sb-val sb-bonus">+${streakBonusTotal} ⭐</span></div>`;
   if(firstTryBonus>0)bdHTML+=`<div class="sb-row"><span class="sb-label">First-try bonus <span class="sb-badge">PERFECT!</span></span><span class="sb-val sb-bonus">+${firstTryBonus} ⭐</span></div>`;
   bdHTML+=`<div class="sb-row"><span>Total this round</span><span class="sb-val">⭐ ${APP.stars}</span></div>`;
-  document.getElementById('cel-breakdown').innerHTML=bdHTML;
-
   // ── Challenge Round button ──
   // Show if they got at least 2 questions right — earn the right to challenge
   const chalBtn=document.getElementById('cel-challenge-btn');
-  if(APP.correct>=2){
+  if(APP.correct>=Math.ceil(APP.totalQ*0.6)){
     chalBtn.style.display='';
     chalBtn.innerHTML=APP.correct===APP.totalQ
       ? '⚡ PERFECT! Take the CHALLENGE! 🔥'
@@ -2434,6 +2623,19 @@ function celebrate(){
   }
 
   stopSmartHUD();
+  advanceJourney();
+  checkGameBadges();
+  recordDailyProgress(APP.correct);
+
+  // Merit pass indicator in breakdown
+  const passed = meritPass();
+  if(passed){
+    bdHTML += `<div class="sb-row merit-pass">✅ Journey unlocked! Keep it up!</div>`;
+  } else {
+    bdHTML += `<div class="sb-row merit-fail">Try again to unlock the next step (need ${Math.ceil(APP.totalQ*0.6)}/${APP.totalQ} correct)</div>`;
+  }
+  document.getElementById('cel-breakdown').innerHTML=bdHTML;
+
   showScreen('s-celebrate');
   setTimeout(()=>leoSpeak(isPerfect?'perfect':'celebrate'),400);
 }
@@ -4364,6 +4566,178 @@ function genSorting(){
     wrongs=shuf(sg.items).slice(0,3);
   }
   _simpleQ('sorting',qText,correct,shuf(wrongs));
+}
+
+
+// ══════════════════════════════════════════════
+//  JOURNEY MODE
+// ══════════════════════════════════════════════
+const JOURNEY = [
+  // Each node: {game, emoji, label, milestone?}
+  {game:'counting',   e:'🔢', label:'Counting'},
+  {game:'addition',   e:'➕', label:'Adding'},
+  {game:'shapes',     e:'🔷', label:'Shapes'},
+  {game:'compare',    e:'⚖️', label:'Big & Small'},
+  null, // milestone: "Math Starter! ⭐"
+  {game:'letters',    e:'🔤', label:'Letters'},
+  {game:'phonics',    e:'🔊', label:'Phonics'},
+  {game:'words',      e:'📖', label:'Words'},
+  {game:'rhymes',     e:'🎵', label:'Rhymes'},
+  null, // milestone: "Reading Star! 📚"
+  {game:'colors',     e:'🎨', label:'Colors'},
+  {game:'animals',    e:'🐾', label:'Animals'},
+  {game:'weather',    e:'🌤️', label:'Weather'},
+  {game:'experiment', e:'🧪', label:'Experiments'},
+  null, // milestone: "Science Explorer! 🔬"
+  {game:'coins',      e:'🪙', label:'Coin World'},
+  {game:'patterns',   e:'🔵', label:'Patterns'},
+  {game:'onemore',    e:'🔢', label:'One More/Less'},
+  {game:'time',       e:'🕐', label:'Time'},
+  {game:'calendar',   e:'📅', label:'Calendar'},
+  null, // milestone: "Life Skills! 🧠"
+  {game:'space',      e:'🚀', label:'Space'},
+  {game:'physics',    e:'⚡', label:'Physics'},
+  {game:'bodyscience',e:'🫀', label:'Our Body'},
+  {game:'nature',     e:'🌿', label:'Nature'},
+  null, // milestone: "Science Pro! 🏆"
+  {game:'geography',  e:'🗺️', label:'Continents'},
+  {game:'flags',      e:'🏁', label:'Flags'},
+  {game:'directions', e:'🧭', label:'Directions'},
+  {game:'landmarks',  e:'🏛️', label:'Landmarks'},
+  null, // milestone: "World Explorer! 🌍"
+  {game:'music',      e:'🎵', label:'Music'},
+  {game:'colormix',   e:'🖌️', label:'Color Mix'},
+  {game:'sorting',    e:'🗂️', label:'Sorting'},
+  {game:'money',      e:'💰', label:'Money'},
+  {game:'bodyscience',e:'🏆', label:'MASTER!'},
+];
+
+const MILESTONES = [
+  '⭐ Math Starter unlocked!',
+  '📚 Reading Star unlocked!',
+  '🔬 Science Explorer unlocked!',
+  '🧠 Life Skills unlocked!',
+  '🏆 Science Pro unlocked!',
+  '🌍 World Explorer unlocked!',
+];
+
+function getJourneyProgress(){
+  return parseInt(localStorage.getItem('learnly_journey')||'0');
+}
+function saveJourneyProgress(n){
+  localStorage.setItem('learnly_journey', n);
+}
+function advanceJourney(){
+  // Merit gate: must pass (≥60% correct) to unlock next node
+  if(!meritPass()) return;
+  const prog = getJourneyProgress();
+  const next = prog + 1;
+  const cap = JOURNEY.filter(j=>j!==null).length;
+  if(next <= cap) saveJourneyProgress(next);
+  const jBtn = document.getElementById('vt-journey');
+  if(jBtn && jBtn.classList.contains('active')) renderJourneyMap();
+}
+
+function renderJourneyMap(){
+  const container = document.getElementById('journey-map');
+  if(!container) return;
+  container.innerHTML = '';
+  const prog = getJourneyProgress(); // number of real nodes completed
+  let realIdx = 0; // counts only non-null nodes
+  let msIdx = 0;
+
+  JOURNEY.forEach((node, i) => {
+    if(node === null){
+      // milestone banner
+      const done = realIdx <= prog;
+      if(done){
+        const ms = document.createElement('div');
+        ms.className = 'j-milestone';
+        ms.textContent = MILESTONES[msIdx] || '🎉 Section Complete!';
+        container.appendChild(ms);
+      } else {
+        const ms = document.createElement('div');
+        ms.className = 'j-milestone';
+        ms.style.cssText = 'background:#DDD;color:#AAA;box-shadow:none';
+        ms.textContent = '🔒 Complete section to unlock';
+        container.appendChild(ms);
+      }
+      msIdx++;
+      return;
+    }
+
+    const nodeNum = realIdx; // 0-based index among real nodes
+    const isDone = nodeNum < prog;
+    const isCurrent = nodeNum === prog;
+    const isLocked = nodeNum > prog;
+    realIdx++;
+
+    // connector dots above (skip for first)
+    if(i > 0 && JOURNEY[i-1] !== null){
+      const dots = document.createElement('div');
+      dots.className = 'jdots' + (isDone ? ' done-dots' : '');
+      container.appendChild(dots);
+    }
+
+    // row wrapper for snake positioning
+    const row = document.createElement('div');
+    row.className = 'jrow';
+
+    const nd = document.createElement('div');
+    nd.className = 'jnode ' + (isDone ? 'jdone' : isCurrent ? 'jcurrent' : 'jlocked');
+
+    const em = document.createElement('div');
+    em.textContent = isDone ? '✓' : node.e;
+    em.style.fontSize = isDone ? '2rem' : '1.9rem';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'jnode-label';
+    lbl.textContent = node.label;
+
+    nd.appendChild(em);
+    nd.appendChild(lbl);
+
+    if(!isLocked){
+      nd.onclick = () => {
+        if(isCurrent){
+          launch(node.game);
+        } else {
+          // replay completed node
+          launch(node.game);
+        }
+      };
+      nd.title = isDone ? 'Replay '+node.label : 'Start '+node.label;
+    } else {
+      nd.onclick = () => {
+        speak('Finish the current lesson first!');
+        leoSpeak('hint');
+      };
+    }
+
+    row.appendChild(nd);
+    container.appendChild(row);
+  });
+}
+
+function setHubView(mode){
+  APP.hubView = mode;
+  localStorage.setItem('learnly_hubview', mode);
+  const grid = document.getElementById('hub-grid');
+  const journey = document.getElementById('journey-map');
+  const btnG = document.getElementById('vt-grid');
+  const btnJ = document.getElementById('vt-journey');
+  if(mode === 'journey'){
+    grid.style.display = 'none';
+    journey.classList.add('show');
+    btnG.classList.remove('active');
+    btnJ.classList.add('active');
+    renderJourneyMap();
+  } else {
+    grid.style.display = '';
+    journey.classList.remove('show');
+    btnG.classList.add('active');
+    btnJ.classList.remove('active');
+  }
 }
 
 </script>
