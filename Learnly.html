@@ -55,7 +55,7 @@ body{
 #s-welcome{justify-content:center;gap:20px;background:linear-gradient(160deg,#FFF0F8 30%,#FFF8E8 60%,#EAF6FF)}
 .app-logo{font-size:clamp(2.8rem,10vw,4.2rem);font-weight:900;color:var(--orange);text-shadow:4px 4px 0 var(--yellow),6px 6px 0 rgba(255,107,53,.15);line-height:1.1;text-align:center}
 .app-tagline{font-size:1.05rem;color:#999;text-align:center;font-weight:700;letter-spacing:.3px}
-.buddy-big{font-size:clamp(5rem,18vw,8rem);animation:float 2.5s ease-in-out infinite;filter:drop-shadow(0 8px 18px rgba(0,0,0,.16))}
+.buddy-big{display:none!important}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:420px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:420px}
 .pick-card{background:white;border-radius:20px;padding:14px 6px;text-align:center;cursor:pointer;border:3px solid #F0F0F0;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.07)}
@@ -177,6 +177,7 @@ body{
 }
 
 .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.act-grid>.act-card:last-child:nth-child(odd){grid-column:span 2}
 .act-card{border-radius:24px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 6px 18px rgba(0,0,0,.13);position:relative;overflow:hidden;border:none}
 .act-card:active{transform:scale(.92);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .act-card.locked{opacity:.45;cursor:default;filter:grayscale(.5)}
@@ -467,10 +468,36 @@ body{
 .ch-cell.can-move{box-shadow:inset 0 0 0 3px rgba(76,175,80,.8)}
 .ch-info{font-size:.9rem;font-weight:800;color:var(--text);text-align:center;min-height:28px}
 
+@media(max-width:600px){
+  body{padding:8px;padding-bottom:env(safe-area-inset-bottom,16px)}
+  .hub-header{padding:10px 12px 8px}
+  .hub-title{font-size:1.3rem}
+  .hub-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+  .subject-card{padding:16px 10px 12px;border-radius:20px}
+  .subject-icon{font-size:2.2rem}
+  .subject-name{font-size:.85rem}
+  .act-grid{gap:10px;padding:0 2px}
+  .act-card{padding:16px 10px;border-radius:20px}
+  .act-icon{font-size:2rem}
+  .act-name{font-size:.9rem}
+  .game-header{padding:8px 12px}
+  .score-badge{font-size:.75rem;padding:4px 10px}
+  .question-area{padding:16px 12px;min-height:120px;font-size:1.05rem;border-radius:20px}
+  .ans-grid{gap:10px}
+  .ans-btn{padding:14px 18px;font-size:1.55rem;min-width:80px;min-height:52px;border-radius:16px;touch-action:manipulation}
+  .welcome-title{font-size:1.8rem}
+  .welcome-sub{font-size:1rem}
+  .start-btn{font-size:1.1rem;padding:14px 32px}
+  .settings-panel{padding:16px}
+  .modal-box{padding:20px 16px;border-radius:24px;margin:8px}
+  .streak-badge{font-size:.75rem}
+}
 @media(max-width:380px){
   .ans-btn{padding:13px 18px;min-width:72px;font-size:1.65rem}
   .act-grid{gap:9px}
   .act-card{padding:15px 10px}
+  .hub-grid{grid-template-columns:1fr 1fr}
+  .welcome-title{font-size:1.5rem}
 }
 /* ═══════════════════════════════════
    CHALLENGE ROUND
@@ -832,7 +859,7 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 
 <!-- ════════════ SCREEN: WELCOME ════════════ -->
 <div class="screen active" id="s-welcome">
-  <div class="buddy-big" id="welcome-buddy">🦁</div>
+  
   <div class="app-logo">🦁 Learnly</div>
   <div class="app-tagline">Learn with Leo, your study buddy!</div>
   <div style="background:linear-gradient(135deg,#FFF3EE,#FFE5D5);border-radius:20px;padding:12px 20px;max-width:380px;width:100%;text-align:center;border:2px solid #FFD3C2">
@@ -2110,17 +2137,24 @@ function speak(text){
   const clean=cleanForSpeech(text);
   if(!clean)return;
   window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(clean);
-  u.lang='en-US';
-  // rate=1.0 is the voice's natural speaking speed — least robotic
-  // pitch=1.0 is the voice's natural pitch — sounds most human
-  // Going slower (0.8-0.9) actually makes the prosody pattern more noticeable = more robotic
-  u.rate=1.0; u.pitch=1.0; u.volume=1;
-  const v=getKidVoice(); if(v)u.voice=v;
-  const btn=document.getElementById('global-speak');
-  if(btn){btn.classList.add('speaking');u.onend=()=>btn.classList.remove('speaking');u.onerror=()=>btn.classList.remove('speaking');}
-  // Small delay lets the audio context settle — prevents cut-off on first word
-  setTimeout(()=>window.speechSynthesis.speak(u), 80);
+  setTimeout(function(){
+    const u=new SpeechSynthesisUtterance(clean);
+    u.lang='en-US';
+    u.rate=0.88;
+    u.pitch=1.05;
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=['Samantha','Eddy','Sandy','Flo','Shelley','Google US English','Microsoft Zira','Allison'];
+    let best=null;
+    for(const name of preferred){
+      best=voices.find(function(v){return v.name.includes(name)&&v.lang.startsWith('en');});
+      if(best)break;
+    }
+    if(!best)best=voices.find(function(v){return v.lang==='en-US'&&v.localService;});
+    if(!best)best=voices.find(function(v){return v.lang.startsWith('en');});
+    if(best)u.voice=best;
+    window.speechSynthesis.speak(u);
+    if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+  },50);
 }
 function speakCurrentQ(){if(_curQ&&!isMuted())speak(_curQ);}
 if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.addEventListener('voiceschanged',()=>window.speechSynthesis.getVoices());}
