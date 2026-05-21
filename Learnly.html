@@ -764,6 +764,46 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
 .act-card:hover,.act-card:active{transform:translateY(-4px)!important}
 .jnode{box-shadow:0 5px 16px rgba(0,0,0,.15)!important;font-size:1.35rem!important;transition:transform .15s!important}
 .jnode:hover{transform:scale(1.1)!important}
+
+/* === DEEP POLISH v1 === */
+/* COIN VISUAL — bigger, metallic, visible */
+.coin-visual{width:180px!important;height:180px!important;font-size:7rem!important;background:linear-gradient(135deg,#c0c0c0,#e8e8e8,#a8a8a8)!important;box-shadow:0 8px 32px rgba(0,0,0,.25),inset 0 2px 6px rgba(255,255,255,.4)!important}
+.coin-visual.penny{background:linear-gradient(135deg,#b87333,#d4956a,#8b5e3c)!important}
+.coin-visual.nickel{background:linear-gradient(135deg,#8e9ea0,#c8d4d6,#7a8a8c)!important}
+.coin-visual.dime{background:linear-gradient(135deg,#9e9e9e,#d8d8d8,#888)!important}
+.coin-visual.quarter{background:linear-gradient(135deg,#a0a8b0,#dce4ec,#8090a0)!important}
+.coin-lbl{font-size:1.3rem!important;font-weight:900!important;color:#555!important;letter-spacing:.05em}
+/* Question text bigger */
+.game-q{font-size:clamp(1.5rem,5vw,2.1rem)!important;font-weight:900!important;line-height:1.25!important}
+/* Game card polish */
+.game-card{box-shadow:0 10px 40px rgba(0,0,0,.13)!important;border-radius:32px!important;padding:28px 20px!important}
+/* Progress bar thicker */
+.prog-bar,.progress-bar{height:14px!important;border-radius:10px!important}
+/* Lives bigger */
+.og-lbl,.og-val{font-size:1.1rem!important;font-weight:900!important}
+/* Correct/wrong flash — BIGGER animations */
+@keyframes bigPop{0%{transform:scale(1)}35%{transform:scale(1.18)}65%{transform:scale(.94)}100%{transform:scale(1)}}
+@keyframes bigShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-12px)}40%{transform:translateX(12px)}60%{transform:translateX(-9px)}80%{transform:translateX(9px)}}
+.ans-btn.correct-flash{animation:bigPop .5s ease!important;background:linear-gradient(135deg,#16a34a,#22c55e)!important;color:#fff!important}
+.ans-btn.wrong-flash{animation:bigShake .5s ease!important;background:linear-gradient(135deg,#dc2626,#ef4444)!important;color:#fff!important}
+/* Journey nodes bigger */
+.jnode{width:100px!important;height:100px!important;font-size:1.5rem!important;font-weight:800!important}
+/* Activity card icons */
+.act-icon{font-size:2.8rem!important;display:block!important;margin-bottom:4px!important}
+.act-name{font-weight:800!important;font-size:1rem!important}
+/* Feedback message overlay */
+.feedback-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.75);color:#fff;padding:18px 36px;border-radius:24px;font-size:2rem;font-weight:900;z-index:9999;pointer-events:none;transition:transform .15s ease,opacity .3s ease;opacity:0}
+.feedback-msg.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+/* Mascot reaction */
+.leo-react{transition:transform .2s ease;display:inline-block}
+.leo-react.happy{animation:leoBounce .5s ease}
+.leo-react.sad{animation:leoShake .4s ease}
+@keyframes leoBounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}70%{transform:translateY(-6px)}}
+@keyframes leoShake{0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}70%{transform:rotate(12deg)}}
+/* Coin display container */
+.coin-display{display:flex;flex-direction:column;align-items:center;gap:10px!important;padding:12px 0!important}
+/* Score area  */
+.score-val{font-size:1.5rem!important;font-weight:900!important}
 </style>
 </head>
 <body>
@@ -4829,6 +4869,69 @@ function setHubView(mode){
     return b;
   };
 })();
+
+/* === DEEP POLISH JS === */
+(function(){
+  // Coin type auto-coloring via MutationObserver
+  function tagCoins(){
+    document.querySelectorAll('.coin-visual:not([data-tagged])').forEach(function(el){
+      el.dataset.tagged='1';
+      var container=el.closest('.coin-display')||el.parentElement||document;
+      var txt=(container.innerText||'').toLowerCase();
+      if(txt.includes('penny')||txt.includes('1 cent')||txt.includes('1¢'))el.classList.add('penny');
+      else if(txt.includes('nickel')||txt.includes('5 cent')||txt.includes('5¢'))el.classList.add('nickel');
+      else if(txt.includes('dime')||txt.includes('10 cent')||txt.includes('10¢'))el.classList.add('dime');
+      else if(txt.includes('quarter')||txt.includes('25 cent')||txt.includes('25¢'))el.classList.add('quarter');
+    });
+  }
+  new MutationObserver(tagCoins).observe(document.body,{childList:true,subtree:true});
+
+  // Feedback message overlay
+  var _fb=document.createElement('div');
+  _fb.className='feedback-msg';
+  _fb.id='feedback-overlay';
+  document.body.appendChild(_fb);
+  var _fbTimer=null;
+
+  var CORRECT_MSGS=['Amazing! 🎉','Brilliant! ⭐','You got it! 🦁','Fantastic! 🚀','Correct! 🎊','Super smart! 🌟','Yes! Perfect! ✨'];
+  var WRONG_MSGS=['Keep trying! 💪','So close! 🦁','Try again! 😊','You've got this! 🌟'];
+
+  window.showFeedback=function(isCorrect){
+    var msgs=isCorrect?CORRECT_MSGS:WRONG_MSGS;
+    var msg=msgs[Math.floor(Math.random()*msgs.length)];
+    _fb.textContent=msg;
+    _fb.className='feedback-msg'+(isCorrect?' show':' show');
+    _fb.style.background=isCorrect?'rgba(22,163,74,.9)':'rgba(220,38,38,.8)';
+    clearTimeout(_fbTimer);
+    _fb.classList.add('show');
+    _fbTimer=setTimeout(function(){_fb.classList.remove('show');},900);
+    // Leo mascot reaction
+    var leo=document.querySelector('.leo-react')||document.querySelector('[class*="leo"]')||document.querySelector('#welcome-buddy');
+    if(leo){
+      leo.classList.remove('happy','sad');
+      void leo.offsetWidth;
+      leo.classList.add(isCorrect?'happy':'sad');
+      setTimeout(function(){leo.classList.remove('happy','sad');},600);
+    }
+  };
+
+  // Hook into the existing onAnswer to trigger feedback
+  var _origOA=typeof onAnswer!=='undefined'?onAnswer:null;
+  if(typeof window!=='undefined'){
+    var _oaHook=setInterval(function(){
+      if(typeof onAnswer!=='undefined'&&onAnswer!==window.__hooked_oa){
+        var prev=onAnswer;
+        onAnswer=function(isCorrect){
+          showFeedback(isCorrect);
+          return prev.apply(this,arguments);
+        };
+        window.__hooked_oa=onAnswer;
+        clearInterval(_oaHook);
+      }
+    },500);
+  }
+})();
+
 </script>
 
 <!-- ════════════ FOOTER INFO MODAL ════════════ -->
