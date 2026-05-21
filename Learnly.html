@@ -2502,7 +2502,7 @@ function _chalAward(btn){
 }
 
 function onAnswer(isCorrect, btn){
-  if(!APP.canAnswer)return; APP.canAnswer=false;
+  if(!APP.canAnswer)return; APP.canAnswer=false;if(!isCorrect){APP._wc=(APP._wc||0)+1;if(APP._wc>=2){setTimeout(function(){var _a=document.getElementById(APP.game+'-ans');if(_a){var _c=_a.querySelector('[data-correct="1"]');if(_c)_c.classList.add('hint');}},420);}}else{APP._wc=0;}
   // Update SmartScore
   updateSmartScore(isCorrect);
   // Stop challenge timer
@@ -2830,7 +2830,7 @@ function genCounting(){
   const area=document.getElementById('counting-area');
   for(let i=0;i<count;i++){const d=document.createElement('div');d.className='emoji-item';d.textContent=e;d.style.cssText=`opacity:0;animation:item-pop .35s ease ${i*.08}s both`;d.onclick=()=>{sndCount();d.classList.toggle('counted');};area.appendChild(d);}
   const ans=document.getElementById('counting-ans');
-  opts.forEach(o=>{const b=mkBtn(o,()=>{if(o!==count)hintWrong('counting-ans',count);onAnswer(o===count,b);});b.dataset.v=o;ans.appendChild(b);});
+  opts.forEach(o=>{var b=mkBtn(o,()=>{if(o!==count)hintWrong('counting-ans',count);onAnswer(o===count,b);});b.dataset.v=o;ans.appendChild(b);});
   speak(q);
 }
 
@@ -2872,7 +2872,7 @@ function genShapes(){
   setQ('shapes-q','What shape is this? 👆');
   document.getElementById('shapes-area').innerHTML=`<div class="shape-box" style="animation:pop-in .45s ease both">${correct.svg}</div>`;
   const ans=document.getElementById('shapes-ans'); ans.innerHTML='';
-  all.forEach(sh=>{const b=mkBtn(sh.e+' '+sh.n,()=>onAnswer(sh.n===correct.n,b),true);ans.appendChild(b);});
+  all.forEach(sh=>{var b=mkBtn(sh.e+' '+sh.n,()=>onAnswer(sh.n===correct.n,b),true);ans.appendChild(b);});
   speak('What shape is this?');
 }
 
@@ -2917,12 +2917,12 @@ function genLetters(){
   if(ri(0,2)===0){
     const q='What letter is this? 👆'; setQ('letters-q',q);
     area.innerHTML=`<div class="big-letter" style="animation:pop-in .4s ease both">${correct.l}</div>`;
-    opts.forEach(o=>{const b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
     speak('What letter is this?');
   } else {
     const q=`What letter starts "${correct.w}"?`; setQ('letters-q',q);
     area.innerHTML=`<div style="text-align:center"><div style="font-size:min(5rem,22vw);animation:pop-in .4s ease both">${correct.e}</div><div style="font-size:1.4rem;font-weight:900;color:#777;margin-top:8px">${correct.w}</div></div>`;
-    opts.forEach(o=>{const b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
     speak(`What letter starts ${correct.w}?`);
   }
 }
@@ -2936,7 +2936,7 @@ function genWords(){
   setQ('words-q','What word matches this picture? 👆');
   document.getElementById('words-area').innerHTML=`<div style="font-size:min(5.5rem,22vw);animation:pop-in .4s ease both">${item.e}</div>`;
   const ans=document.getElementById('words-ans'); ans.innerHTML='';
-  opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===item.w,b));b.style.cssText+=';font-size:1.3rem;letter-spacing:2px;';ans.appendChild(b);});
+  opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===item.w,b));b.style.cssText+=';font-size:1.3rem;letter-spacing:2px;';ans.appendChild(b);});
   speak('What word matches this picture?');
 }
 
@@ -2953,12 +2953,12 @@ function genAnimals(){
   if(mode===0){
     const q=`What sound does a ${a.n} make? 🔊`; setQ('animals-q',q);
     const opts=shuf([a.sound,...a.x_s]);
-    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===a.sound,b));ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===a.sound,b));ans.appendChild(b);});
     speak(`What sound does a ${a.n} make?`);
   } else {
     const q=`Where does a ${a.n} live? 🏠`; setQ('animals-q',q);
     const opts=shuf([a.hab,...a.x_h]);
-    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===a.hab,b));ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===a.hab,b));ans.appendChild(b);});
     speak(`Where does a ${a.n} live?`);
   }
 }
@@ -2977,12 +2977,12 @@ function genWeather(){
     const q='What weather is this? ☁️'; setQ('weather-q',q);
     const wrongs=shuf(WEATHER.filter((_,i)=>i!==idx)).slice(0,2).map(x=>x.n);
     const opts=shuf([w.n,...wrongs]);
-    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===w.n,b));ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===w.n,b));ans.appendChild(b);});
     speak('What weather is this?');
   } else {
     setQ('weather-q',w.q);
     const opts=shuf([w.a,...w.x]);
-    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===w.a,b),true);ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===w.a,b),true);ans.appendChild(b);});
     speak(w.q);
   }
 }
@@ -2999,7 +2999,7 @@ function genExperiment(){
   const ans=document.getElementById('experiment-ans'); ans.innerHTML='';
   const opts=shuf([ex.result,...ex.x]);
   const labels=isSinkFloat?{sink:'🪨 Sink',float:'🎈 Float'}:{hot:'🔥 Hot',cold:'🧊 Cold'};
-  opts.forEach(o=>{const label=labels[o]||o;const b=mkBtn(label,()=>onAnswer(o===ex.result,b));ans.appendChild(b);});
+  opts.forEach(o=>{const label=labels[o]||o;var b=mkBtn(label,()=>onAnswer(o===ex.result,b));ans.appendChild(b);});
   speak(ex.q);
 }
 
@@ -3038,7 +3038,7 @@ function genColors(){
   if(mode===0){
     setQ('colors-q','What color is this? 🎨');
     area.innerHTML=`<div class="color-swatch" style="background:${correct.h};width:min(155px,42vw);height:min(155px,42vw);border-radius:50%;box-shadow:0 8px 26px rgba(0,0,0,.18);animation:pop-in .45s ease both"></div>`;
-    opts.forEach(o=>{const b=mkBtn(o.n,()=>onAnswer(o.n===correct.n,b),true);ans.appendChild(b);});
+    opts.forEach(o=>{var b=mkBtn(o.n,()=>onAnswer(o.n===correct.n,b),true);ans.appendChild(b);});
     speak('What color is this?');
   } else {
     setQ('colors-q',`Tap the ${correct.n} circle! 🎨`);
@@ -3919,7 +3919,7 @@ function genCoins(){
   _curQ=qText;
 
   options.forEach(opt=>{
-    const b=mkBtn(opt, ()=>onAnswer(opt===correct, b));
+    var b=mkBtn(opt, ()=>onAnswer(opt===correct, b));
     b.dataset.v=opt;
     ans.appendChild(b);
   });
@@ -4028,7 +4028,7 @@ function genOneMore(){
     if(num<=10) div.appendChild(objRow);
     area.appendChild(div);
     opts.forEach(opt=>{
-      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      var b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
       b.dataset.v=opt;
       ans.appendChild(b);
     });
@@ -4050,7 +4050,7 @@ function genOneMore(){
     div.appendChild(numBox);
     area.appendChild(div);
     opts.forEach(opt=>{
-      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      var b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
       b.dataset.v=opt;
       ans.appendChild(b);
     });
@@ -4250,7 +4250,7 @@ function _simpleQ(game,qText,correct,wrongs){
   const opts=shuf([correct,...wrongs.slice(0,3)]);
   const ans=document.getElementById(g+'-ans');
   opts.forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    var b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4344,7 +4344,7 @@ function genRhymes(){
   const qText='Which word RHYMES with '+r.word+'?';
   setQ('rhymes-q',qText);
   opts.forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===r.rhyme,b));
+    var b=mkBtn(o,()=>onAnswer(o===r.rhyme,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText+' '+r.word);
@@ -4376,7 +4376,7 @@ function genPhonics(){
   setQ('phonics-q',qText);
   const ans=document.getElementById('phonics-ans');
   opts.forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    var b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4409,7 +4409,7 @@ function genFlags(){
   const opts=shuf([f.country,...wrongCountries]);
   const ans=document.getElementById('flags-ans');
   opts.forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===f.country,b));
+    var b=mkBtn(o,()=>onAnswer(o===f.country,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4462,7 +4462,7 @@ function genTime(){
   const timeStr=hour+':'+(mins===0?'00':mins);
   const correct=hour+(mins===0?' o\'clock':':'+mins);
   const wrongs=shuf(TIME_HOURS.filter(h=>h!==hour)).slice(0,2).map(h=>h+(mins===0?' o\'clock':':'+mins));
-  wrongs.push((hour===12?1:hour+1)+(mins===0?' o\'clock':':'+mins));
+  {var _nx=(hour===12?1:hour+1)+(mins===0?' o\'clock':':'+mins);if(!wrongs.includes(_nx)){wrongs.push(_nx);}else{var _alt=hour>2?hour-1:hour+2;wrongs.push(_alt+(mins===0?' o\'clock':':'+mins));}}
   const area=document.getElementById('time-area'); clearArea('time-area'); clearArea('time-ans');
   const d=document.createElement('div');
   d.style.cssText='font-size:3.5rem;font-weight:900;color:var(--blue);text-align:center;width:100%;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:20px;padding:16px';
@@ -4471,7 +4471,7 @@ function genTime(){
   setQ('time-q',qText);
   const ans=document.getElementById('time-ans');
   shuf([correct,...wrongs.slice(0,3)]).forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    var b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4539,7 +4539,7 @@ function genMoney(){
   const wrongs=makeOpts(total,Math.max(1,total-20),total+25,4).filter(v=>v!==total).map(v=>v+'¢').slice(0,3);
   const ans=document.getElementById('money-ans');
   shuf([correct,...wrongs]).forEach(o=>{
-    const b=mkBtn(o,()=>onAnswer(o===correct,b));
+    var b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4740,6 +4740,24 @@ function setHubView(mode){
   }
 }
 
+
+;(function(){
+  var __mb=mkBtn;
+  mkBtn=function(label,cb,...rest){
+    var b=__mb(label,cb,...rest);
+    var _oa=onAnswer,_sp=(typeof speak==="function"?speak:null),_can=APP.canAnswer;
+    var _ok=false;
+    onAnswer=function(ic){_ok=ic;};
+    if(_sp)speak=function(){};
+    APP.canAnswer=true;
+    try{cb();}catch(e){}
+    onAnswer=_oa;
+    if(_sp)speak=_sp;
+    APP.canAnswer=_can;
+    if(_ok)b.dataset.correct="1";
+    return b;
+  };
+})();
 </script>
 
 <!-- ════════════ FOOTER INFO MODAL ════════════ -->
