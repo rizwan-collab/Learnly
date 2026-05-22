@@ -804,6 +804,23 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
 .coin-display{display:flex;flex-direction:column;align-items:center;gap:10px!important;padding:12px 0!important}
 /* Score area  */
 .score-val{font-size:1.5rem!important;font-weight:900!important}
+
+/* === END SCREEN CSS === */
+#end-screen{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#7c3aed,#db2877);z-index:10000;flex-direction:column;align-items:center;justify-content:center;font-family:inherit}
+#end-screen.show{display:flex}
+.end-inner{text-align:center;color:#fff;padding:32px 20px;max-width:440px;width:100%}
+.end-title{font-size:2.2rem;font-weight:900;margin-bottom:8px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.end-subtitle{font-size:1rem;opacity:.85;margin-bottom:22px}
+.end-stars{font-size:3.2rem;margin-bottom:18px;letter-spacing:4px;display:block}
+.end-stars span{display:inline-block;opacity:0;transform:scale(0);transition:none}
+.end-stars span.pop{animation:starPop .45s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes starPop{to{opacity:1;transform:scale(1)}}
+.end-score{font-size:1.5rem;font-weight:800;background:rgba(255,255,255,.2);border-radius:16px;padding:10px 26px;margin-bottom:26px;display:inline-block}
+.end-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.end-btn{padding:13px 26px;border-radius:50px;border:none;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.end-btn:hover{transform:scale(1.06)}
+.end-btn.primary{background:#fff;color:#7c3aed}
+.end-btn.secondary{background:rgba(255,255,255,.22);color:#fff;border:2px solid rgba(255,255,255,.45)}
 </style>
 </head>
 <body>
@@ -4870,68 +4887,161 @@ function setHubView(mode){
   };
 })();
 
-/* === DEEP POLISH JS === */
+/* === FINAL POLISH JS v2 === */
 (function(){
-  // Coin type auto-coloring via MutationObserver
-  function tagCoins(){
-    document.querySelectorAll('.coin-visual:not([data-tagged])').forEach(function(el){
-      el.dataset.tagged='1';
-      var container=el.closest('.coin-display')||el.parentElement||document;
-      var txt=(container.innerText||'').toLowerCase();
-      if(txt.includes('penny')||txt.includes('1 cent')||txt.includes('1¢'))el.classList.add('penny');
-      else if(txt.includes('nickel')||txt.includes('5 cent')||txt.includes('5¢'))el.classList.add('nickel');
-      else if(txt.includes('dime')||txt.includes('10 cent')||txt.includes('10¢'))el.classList.add('dime');
-      else if(txt.includes('quarter')||txt.includes('25 cent')||txt.includes('25¢'))el.classList.add('quarter');
+  /* Web Audio SFX */
+  var _ac=null;
+  function getAC(){if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return _ac;}
+  function playTones(notes){
+    var a=getAC();if(!a)return;
+    if(a.state==='suspended')a.resume();
+    var t=a.currentTime;
+    notes.forEach(function(n){
+      var o=a.createOscillator(),g=a.createGain();
+      o.connect(g);g.connect(a.destination);
+      o.type=n[2]||'sine';
+      o.frequency.setValueAtTime(n[0],t+n[1]);
+      g.gain.setValueAtTime(0,t+n[1]);
+      g.gain.linearRampToValueAtTime(.32,t+n[1]+.01);
+      g.gain.exponentialRampToValueAtTime(.001,t+n[1]+n[3]);
+      o.start(t+n[1]);o.stop(t+n[1]+n[3]+.05);
     });
   }
-  new MutationObserver(tagCoins).observe(document.body,{childList:true,subtree:true});
+  function sfxCorrect(){playTones([[523.25,0,'sine',.18],[659.25,.1,'sine',.18],[783.99,.2,'sine',.22]]);}
+  function sfxWrong(){playTones([[349.23,0,'sawtooth',.12],[293.66,.1,'sawtooth',.12],[246.94,.2,'sawtooth',.16]]);}
+  function sfxComplete(){playTones([[523.25,0,'sine',.25],[659.25,.12,'sine',.25],[783.99,.24,'sine',.25],[1046.5,.38,'sine',.4]]);}
 
-  // Feedback message overlay
-  var _fb=document.createElement('div');
-  _fb.className='feedback-msg';
-  _fb.id='feedback-overlay';
-  document.body.appendChild(_fb);
-  var _fbTimer=null;
-
-  var CORRECT_MSGS=['Amazing! 🎉','Brilliant! ⭐','You got it! 🦁','Fantastic! 🚀','Correct! 🎊','Super smart! 🌟','Yes! Perfect! ✨'];
-  var WRONG_MSGS=['Keep trying! 💪','So close! 🦁','Try again! 😊','You've got this! 🌟'];
-
-  window.showFeedback=function(isCorrect){
-    var msgs=isCorrect?CORRECT_MSGS:WRONG_MSGS;
-    var msg=msgs[Math.floor(Math.random()*msgs.length)];
-    _fb.textContent=msg;
-    _fb.className='feedback-msg'+(isCorrect?' show':' show');
-    _fb.style.background=isCorrect?'rgba(22,163,74,.9)':'rgba(220,38,38,.8)';
-    clearTimeout(_fbTimer);
-    _fb.classList.add('show');
-    _fbTimer=setTimeout(function(){_fb.classList.remove('show');},900);
-    // Leo mascot reaction
-    var leo=document.querySelector('.leo-react')||document.querySelector('[class*="leo"]')||document.querySelector('#welcome-buddy');
-    if(leo){
-      leo.classList.remove('happy','sad');
-      void leo.offsetWidth;
-      leo.classList.add(isCorrect?'happy':'sad');
-      setTimeout(function(){leo.classList.remove('happy','sad');},600);
-    }
-  };
-
-  // Hook into the existing onAnswer to trigger feedback
-  var _origOA=typeof onAnswer!=='undefined'?onAnswer:null;
-  if(typeof window!=='undefined'){
-    var _oaHook=setInterval(function(){
-      if(typeof onAnswer!=='undefined'&&onAnswer!==window.__hooked_oa){
-        var prev=onAnswer;
-        onAnswer=function(isCorrect){
-          showFeedback(isCorrect);
-          return prev.apply(this,arguments);
-        };
-        window.__hooked_oa=onAnswer;
-        clearInterval(_oaHook);
-      }
-    },500);
+  /* Feedback overlay */
+  var fbEl=document.getElementById('feedback-msg');
+  if(!fbEl){fbEl=document.createElement('div');fbEl.id='feedback-msg';fbEl.className='feedback-msg';document.body.appendChild(fbEl);}
+  var _fbMsgsOk=['Great job! ⭐','♥ You got it!','Awesome! 🎉','Perfect! 🚀','Way to go! 🏆'];
+  var _fbMsgsNo=['Try again! 💪','Keep going! 🌈','Almost! 😊','You can do it! ✨'];
+  function showFB(ok){
+    var list=ok?_fbMsgsOk:_fbMsgsNo;
+    fbEl.textContent=list[Math.floor(Math.random()*list.length)];
+    fbEl.classList.add('show');
+    clearTimeout(fbEl._t);
+    fbEl._t=setTimeout(function(){fbEl.classList.remove('show');},900);
   }
-})();
 
+  /* End screen */
+  var endEl=document.getElementById('end-screen');
+  if(!endEl){
+    endEl=document.createElement('div');endEl.id='end-screen';
+    endEl.innerHTML='<div class="end-inner"><div class="end-title" id="end-title">Round Complete!</div><div class="end-subtitle" id="end-sub"></div><div class="end-stars" id="end-stars"></div><div class="end-score" id="end-score"></div><div class="end-btns"><button class="end-btn primary" onclick="window._endPlay()">&#9654; Play Again</button><button class="end-btn secondary" onclick="window._endBack()">🏠 Activities</button></div></div>';
+    document.body.appendChild(endEl);
+  }
+  var _sessC=0,_sessT=0,_prevProg='';
+  window._endPlay=function(){
+    endEl.classList.remove('show');
+    _sessC=0;_sessT=0;_prevProg='';
+    var b=document.querySelector('.back-btn');if(b)b.click();
+  };
+  window._endBack=function(){
+    endEl.classList.remove('show');
+    _sessC=0;_sessT=0;_prevProg='';
+    var b=document.querySelector('.back-btn');if(b)b.click();
+  };
+  function showEndScreen(){
+    sfxComplete();
+    var pct=_sessT>0?Math.round(_sessC/_sessT*100):0;
+    var stars=pct>=90?3:pct>=60?2:1;
+    var stEl=document.getElementById('end-stars');
+    var scEl=document.getElementById('end-score');
+    var tiEl=document.getElementById('end-title');
+    var suEl=document.getElementById('end-sub');
+    stEl.innerHTML='';
+    for(var i=0;i<3;i++){var s=document.createElement('span');s.textContent=i<stars?'⭐':'☆';stEl.appendChild(s);}
+    scEl.textContent=_sessC+' / '+_sessT+' correct';
+    tiEl.textContent=stars===3?'Amazing! 🏆':stars===2?'Great Job! 🎉':'Keep Practicing! 💪';
+    suEl.textContent=pct+'% — '+(stars===3?'You nailed it!':stars===2?'Well done!':'You'll get it next time!');
+    endEl.classList.add('show');
+    var spans=stEl.querySelectorAll('span');
+    spans.forEach(function(sp,idx){setTimeout(function(){sp.classList.add('pop');},idx*180+200);});
+  }
+
+  /* MutationObserver: watch .ans-btn class for correct/wrong flash */
+  var _aObs=new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.type!=='attributes'||m.attributeName!=='class')return;
+      var cls=m.target.className||'';
+      if(cls.indexOf('correct-flash')>-1){sfxCorrect();showFB(true);_sessC++;_sessT++;}
+      else if(cls.indexOf('wrong-flash')>-1){sfxWrong();showFB(false);_sessT++;}
+    });
+  });
+  var _hooked=new WeakSet();
+  function hookBtns(){
+    document.querySelectorAll('.ans-btn').forEach(function(b){
+      if(!_hooked.has(b)){_hooked.add(b);_aObs.observe(b,{attributes:true,attributeFilter:['class']});}
+    });
+  }
+  hookBtns();
+  new MutationObserver(function(){hookBtns();}).observe(document.body,{childList:true,subtree:true});
+
+  /* MutationObserver: detect round completion via .prog-lbl */
+  function watchProg(){
+    var container=document.querySelector('.game-screen')||document.querySelector('.hub-body')||document.body;
+    new MutationObserver(function(){
+      var pl=document.querySelector('.prog-lbl');if(!pl)return;
+      var txt=pl.textContent.trim();
+      var m=txt.match(/(d+)s*/s*(d+)/);if(!m)return;
+      var cur=parseInt(m[1]),tot=parseInt(m[2]);
+      if(_prevProg){
+        var pm=_prevProg.match(/(d+)s*/s*(d+)/);
+        if(pm&&parseInt(pm[1])===parseInt(pm[2])&&parseInt(pm[2])>0&&cur===1&&_sessT>0){
+          showEndScreen();
+        }
+      }
+      _prevProg=txt;
+    }).observe(container,{childList:true,subtree:true,characterData:true});
+  }
+  watchProg();
+
+  /* Coin auto-coloring */
+  function applyCoinsColor(){
+    var qEl=document.getElementById('coins-q');
+    var aEl=document.getElementById('coins-area');
+    if(!qEl&&!aEl)return;
+    var txt=((qEl?qEl.textContent:'')+' '+(aEl?aEl.textContent:'')).toLowerCase();
+    var type='';
+    if(txt.indexOf('penny')>-1||txt.indexOf('pennies')>-1||txt.indexOf('1¢')>-1)type='penny';
+    else if(txt.indexOf('nickel')>-1||txt.indexOf('5¢')>-1)type='nickel';
+    else if(txt.indexOf('dime')>-1||txt.indexOf('10¢')>-1)type='dime';
+    else if(txt.indexOf('quarter')>-1||txt.indexOf('25¢')>-1)type='quarter';
+    if(!type&&aEl){
+      var w=aEl.querySelector('[class*="coin-"]');
+      if(w){var wc=w.className;
+        if(wc.indexOf('penny')>-1)type='penny';
+        else if(wc.indexOf('nickel')>-1)type='nickel';
+        else if(wc.indexOf('dime')>-1)type='dime';
+        else if(wc.indexOf('quarter')>-1)type='quarter';
+      }
+    }
+    if(type){
+      document.querySelectorAll('.coin-visual').forEach(function(v){
+        v.classList.remove('penny','nickel','dime','quarter');v.classList.add(type);
+      });
+    }
+  }
+  var _cObs=new MutationObserver(function(){applyCoinsColor();});
+  var _cHooked=false;
+  function hookCoins(){
+    var qEl=document.getElementById('coins-q');
+    var aEl=document.getElementById('coins-area');
+    if(!_cHooked&&(qEl||aEl)){
+      _cHooked=true;
+      if(aEl)_cObs.observe(aEl,{childList:true,subtree:true,characterData:true});
+      if(qEl)_cObs.observe(qEl,{childList:true,subtree:true,characterData:true});
+    }
+    applyCoinsColor();
+  }
+  hookCoins();
+  new MutationObserver(function(){_cHooked=false;hookCoins();}).observe(document.body,{childList:true,subtree:true});
+
+  /* Resume AudioContext on first user gesture */
+  document.addEventListener('click',function(){var a=getAC();if(a&&a.state==='suspended')a.resume();},{once:true,capture:true});
+})();
+/* === END FINAL POLISH JS v2 === */
 </script>
 
 <!-- ════════════ FOOTER INFO MODAL ════════════ -->
