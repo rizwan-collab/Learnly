@@ -2,7 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Learnly">
+<meta name="theme-color" content="#FF6B35">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>">
+<script>
+// PWA manifest via Blob (single-file deployment)
+(function(){
+  var m={
+    name:"Learnly – Learn with Leo",short_name:"Learnly",
+    description:"Fun learning games for kids ages 2-8",
+    start_url:".",display:"standalone",
+    background_color:"#FFF9F0",theme_color:"#FF6B35",
+    orientation:"portrait-primary",
+    icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>",sizes:"any",type:"image/svg+xml"}]
+  };
+  var b=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+  var l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(b);
+  document.head.appendChild(l);
+})();
+</script>
 <title>🦁 Learnly – Learn with Leo!</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -17,7 +38,7 @@
 }
 body{
   font-family:'Nunito','Comic Sans MS',cursive,sans-serif;
-  background:var(--bg);min-height:100vh;overflow-x:hidden;
+  background:var(--bg);min-height:100vh;min-height:100dvh;overflow-x:hidden;
   -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
 }
 
@@ -25,9 +46,11 @@ body{
    TOP BAR
 ═══════════════════════════════════ */
 #topbar{
-  position:fixed;top:0;left:0;right:0;height:60px;
+  position:fixed;top:0;left:0;right:0;
+  height:calc(60px + env(safe-area-inset-top));
+  padding-top:env(safe-area-inset-top);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 14px;z-index:200;
+  padding-left:14px;padding-right:14px;z-index:200;
   background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
   box-shadow:0 2px 12px rgba(0,0,0,.07);
 }
@@ -40,13 +63,13 @@ body{
 .icon-btn{background:#F5F5F5;border:none;font-size:1.4rem;cursor:pointer;padding:6px 8px;border-radius:12px;transition:all .15s;line-height:1}
 .icon-btn:active{transform:scale(.84);background:#EBEBEB}
 /* timer bar */
-#timer-bar{position:fixed;top:60px;left:0;right:0;height:5px;z-index:199;background:#EEE;display:none}
+#timer-bar{position:fixed;top:calc(60px + env(safe-area-inset-top));left:0;right:0;height:5px;z-index:199;background:#EEE;display:none}
 #timer-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));transition:width 1s linear}
 
 /* ═══════════════════════════════════
    SCREENS
 ═══════════════════════════════════ */
-.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;padding:74px 16px 40px;gap:16px}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;padding:calc(74px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));gap:16px}
 .screen.active{display:flex}
 
 /* ═══════════════════════════════════
@@ -55,7 +78,7 @@ body{
 #s-welcome{justify-content:center;gap:20px;background:linear-gradient(160deg,#FFF0F8 30%,#FFF8E8 60%,#EAF6FF)}
 .app-logo{font-size:clamp(2.8rem,10vw,4.2rem);font-weight:900;color:var(--orange);text-shadow:4px 4px 0 var(--yellow),6px 6px 0 rgba(255,107,53,.15);line-height:1.1;text-align:center}
 .app-tagline{font-size:1.05rem;color:#999;text-align:center;font-weight:700;letter-spacing:.3px}
-.buddy-big{display:none!important}
+.buddy-big{font-size:clamp(5rem,18vw,8rem);animation:float 2.5s ease-in-out infinite;filter:drop-shadow(0 8px 18px rgba(0,0,0,.16))}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:420px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:420px}
 .pick-card{background:white;border-radius:20px;padding:14px 6px;text-align:center;cursor:pointer;border:3px solid #F0F0F0;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.07)}
@@ -121,31 +144,33 @@ body{
 }
 .jrow{
   display:flex;align-items:center;justify-content:center;
-  width:100%;padding:4px 0;margin:0;
+  width:100%;padding:0 24px;margin:2px 0;
 }
-.jrow{justify-content:center!important;padding:6px 0!important}
+/* alternate nodes left/right for snake feel */
+.jrow:nth-child(4n+1){justify-content:flex-start;padding-left:48px}
+.jrow:nth-child(4n+2){justify-content:center}
+.jrow:nth-child(4n+3){justify-content:flex-end;padding-right:48px}
+.jrow:nth-child(4n+0){justify-content:center}
 
 .jnode{
-  width:90px;height:90px;border-radius:50%;
+  width:76px;height:76px;border-radius:50%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:2.2rem;gap:2px;
-  border:5px solid #DDD;background:linear-gradient(135deg,#F5F5F5,#EBEBEB);
-  cursor:pointer;transition:transform .2s,box-shadow .2s;
-  position:relative;box-shadow:0 6px 18px rgba(0,0,0,.12);
+  font-size:1.9rem;gap:1px;
+  border:4px solid #DDD;background:#EFEFEF;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  position:relative;box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
-.jnode-label{font-size:.62rem;font-weight:900;color:inherit;text-align:center;line-height:1.2;padding:0 6px;max-width:84px;letter-spacing:.02em}
+.jnode-label{font-size:.55rem;font-weight:900;color:inherit;text-align:center;line-height:1.1;padding:0 4px;max-width:70px}
 .jnode.jdone{
-  background:linear-gradient(135deg,#FFD700,#FF8C00);
+  background:linear-gradient(135deg,#FFD700,#FFA500);
   border-color:#E59400;color:white;
-  box-shadow:0 4px 14px rgba(255,165,0,.4);
 }
 .jnode.jdone .jnode-label{color:white}
 .jnode.jcurrent{
-  background:linear-gradient(135deg,#43E97B,#38F9D7);
-  border-color:#00C853;color:white;
-  animation:jPulse 1.4s ease-in-out infinite;
-  box-shadow:0 0 0 6px rgba(67,233,123,.25);
-  transform:scale(1.08);
+  background:linear-gradient(135deg,var(--green),#2E7D32);
+  border-color:#1B5E20;color:white;
+  animation:jPulse 1.3s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(76,175,80,.5);
 }
 .jnode.jcurrent .jnode-label{color:white}
 @keyframes jPulse{
@@ -175,7 +200,6 @@ body{
 }
 
 .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.act-grid>.act-card:last-child:nth-child(odd){grid-column:span 2}
 .act-card{border-radius:24px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:0 6px 18px rgba(0,0,0,.13);position:relative;overflow:hidden;border:none}
 .act-card:active{transform:scale(.92);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .act-card.locked{opacity:.45;cursor:default;filter:grayscale(.5)}
@@ -209,7 +233,11 @@ body{
 .ans-btn:hover{border-color:#DDD;transform:translateY(-2px)}
 .ans-btn.correct{background:linear-gradient(135deg,#43A047,#66BB6A)!important;border-color:#43A047!important;color:white!important;animation:pulse-g .45s ease;pointer-events:none;box-shadow:0 6px 18px rgba(76,175,80,.35)!important}
 .ans-btn.wrong{background:linear-gradient(135deg,#E53935,#EF5350)!important;border-color:#E53935!important;color:white!important;animation:shake .4s ease;pointer-events:none}
-.ans-btn.hint{border-color:var(--green)!important;color:var(--green)!important;font-weight:900;background:#F1FDF4!important}
+.ans-btn.hint{border-color:var(--green)!important;color:var(--green)!important;font-weight:900;background:#F1FDF4!important;animation:hint-pulse 0.6s ease}
+@keyframes hint-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05);box-shadow:0 0 12px rgba(76,175,80,.5)}}
+#daily-challenge-banner:active{transform:scale(.97);transition:transform .12s}
+.ac-subtract{background:linear-gradient(135deg,#FF6B6B,#FF8E53)!important}
+.ac-multiply{background:linear-gradient(135deg,#667eea,#764ba2)!important}
 .ans-btn.sm{font-size:1.15rem;padding:15px 18px;min-width:0;flex:1;border-radius:18px}
 .fb-bar{width:100%;max-width:500px;padding:14px 22px;border-radius:20px;font-size:1.3rem;font-weight:900;text-align:center;opacity:0;transition:opacity .25s;min-height:54px;pointer-events:none}
 .fb-bar.show{opacity:1}
@@ -466,36 +494,13 @@ body{
 .ch-cell.can-move{box-shadow:inset 0 0 0 3px rgba(76,175,80,.8)}
 .ch-info{font-size:.9rem;font-weight:800;color:var(--text);text-align:center;min-height:28px}
 
-@media(max-width:600px){
-  body{padding:8px;padding-bottom:env(safe-area-inset-bottom,16px)}
-  .hub-header{padding:10px 12px 8px}
-  .hub-title{font-size:1.3rem}
-  .hub-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-  .subject-card{padding:16px 10px 12px;border-radius:20px}
-  .subject-icon{font-size:2.2rem}
-  .subject-name{font-size:.85rem}
-  .act-grid{gap:10px;padding:0 2px}
-  .act-card{padding:16px 10px;border-radius:20px}
-  .act-icon{font-size:2rem}
-  .act-name{font-size:.9rem}
-  .game-header{padding:8px 12px}
-  .score-badge{font-size:.75rem;padding:4px 10px}
-  .question-area{padding:16px 12px;min-height:120px;font-size:1.05rem;border-radius:20px}
-  .ans-grid{gap:10px}
-  .ans-btn{padding:14px 18px;font-size:1.55rem;min-width:80px;min-height:52px;border-radius:16px;touch-action:manipulation}
-  .welcome-title{font-size:1.8rem}
-  .welcome-sub{font-size:1rem}
-  .start-btn{font-size:1.1rem;padding:14px 32px}
-  .settings-panel{padding:16px}
-  .modal-box{padding:20px 16px;border-radius:24px;margin:8px}
-  .streak-badge{font-size:.75rem}
-}
 @media(max-width:380px){
   .ans-btn{padding:13px 18px;min-width:72px;font-size:1.65rem}
   .act-grid{gap:9px}
   .act-card{padding:15px 10px}
-  .hub-grid{grid-template-columns:1fr 1fr}
-  .welcome-title{font-size:1.5rem}
+  .top-streak{display:none}
+  .top-stars{padding:5px 8px;font-size:1rem}
+  .icon-btn{padding:5px 6px;font-size:1.2rem}
 }
 /* ═══════════════════════════════════
    CHALLENGE ROUND
@@ -531,7 +536,7 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 
 /* Challenge timer bar */
 #challenge-timer-bar{
-  position:fixed;top:60px;left:0;right:0;height:8px;z-index:198;display:none;background:#3D0070
+  position:fixed;top:calc(60px + env(safe-area-inset-top));left:0;right:0;height:8px;z-index:198;display:none;background:#3D0070
 }
 #challenge-timer-fill{
   height:100%;background:linear-gradient(90deg,#AB47BC,#E040FB,#FFD740);
@@ -543,7 +548,7 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 
 /* Challenge badge shown in game header */
 #challenge-badge{
-  display:none;position:fixed;top:66px;left:50%;transform:translateX(-50%);
+  display:none;position:fixed;top:calc(66px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);
   background:linear-gradient(135deg,#AB47BC,#E040FB);color:white;
   font-size:.78rem;font-weight:900;padding:5px 18px;border-radius:0 0 16px 16px;
   z-index:197;box-shadow:0 4px 14px rgba(156,39,176,.45);letter-spacing:.5px;
@@ -743,84 +748,40 @@ body.challenge-active .next-btn{background:linear-gradient(135deg,#AB47BC,#7B1FA
 .om-obj{font-size:1.8rem;animation:omPop .25s ease}
 
 
-/* === KIDDISH v2 === */
-body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
-.hub-header{background:linear-gradient(135deg,#7c3aed,#db2777)!important;border-radius:0 0 28px 28px!important;box-shadow:0 6px 24px rgba(124,58,237,.35)!important}
-.hub-title{color:#fff!important;font-weight:900!important;font-size:1.6rem!important}
-.subject-card:nth-child(6n+1){background:linear-gradient(135deg,#ff9a9e,#fecfef)!important}
-.subject-card:nth-child(6n+2){background:linear-gradient(135deg,#a1c4fd,#c2e9fb)!important}
-.subject-card:nth-child(6n+3){background:linear-gradient(135deg,#d4fc79,#96e6a1)!important}
-.subject-card:nth-child(6n+4){background:linear-gradient(135deg,#f6d365,#fda085)!important}
-.subject-card:nth-child(6n+5){background:linear-gradient(135deg,#fbc2eb,#a6c1ee)!important}
-.subject-card:nth-child(6n+6){background:linear-gradient(135deg,#84fab0,#8fd3f4)!important}
-.subject-card{border:none!important;box-shadow:0 6px 18px rgba(0,0,0,.11)!important;transition:transform .15s ease,box-shadow .15s ease!important;border-radius:22px!important}
-.subject-card:hover,.subject-card:active{transform:translateY(-5px) scale(1.02)!important;box-shadow:0 10px 28px rgba(0,0,0,.18)!important}
-.subj-emoji{font-size:2.6rem!important}
-.subj-name{font-weight:800!important}
-.ans-btn{background:linear-gradient(135deg,#7c3aed,#4f46e5)!important;color:#fff!important;border:none!important;font-weight:700!important;box-shadow:0 4px 14px rgba(79,70,229,.38)!important;border-radius:18px!important;transition:transform .12s,box-shadow .12s!important}
-.ans-btn:hover,.ans-btn:focus{transform:scale(1.05)!important;box-shadow:0 6px 20px rgba(79,70,229,.5)!important}
-.ans-btn.hint{border:4px solid #22c55e!important;background:linear-gradient(135deg,#16a34a,#4ade80)!important;box-shadow:0 0 0 6px rgba(34,197,94,.25)!important}
-.act-card{background:linear-gradient(135deg,#fefefe,#f0f4ff)!important;border:2px solid #e0e7ff!important;box-shadow:0 4px 14px rgba(0,0,0,.08)!important;border-radius:18px!important;transition:transform .14s!important}
-.act-card:hover,.act-card:active{transform:translateY(-4px)!important}
-.jnode{box-shadow:0 5px 16px rgba(0,0,0,.15)!important;font-size:1.35rem!important;transition:transform .15s!important}
-.jnode:hover{transform:scale(1.1)!important}
+/* ═══════════════════════════════════
+   MOBILE-FIRST PATCH — touch & safe area
+═══════════════════════════════════ */
+/* Touch-action: eliminate tap delay on all interactive elements */
+button,.pick-card,.act-card,.fz-card,.ans-btn,.jnode,.cmp-item,
+.emoji-item,.icon-btn,.next-btn,.challenge-entry-btn,.ac-math1,
+.ac-math2,.ac-math3,.ac-math4,.ac-read1,.ac-read2,.ac-sci1,.ac-sci2,.ac-sci3,
+.ch-cell,.ck-cell,.bb-shoot-btn{
+  touch-action:manipulation;
+}
 
-/* === DEEP POLISH v1 === */
-/* COIN VISUAL — bigger, metallic, visible */
-.coin-visual{width:180px!important;height:180px!important;font-size:7rem!important;background:linear-gradient(135deg,#c0c0c0,#e8e8e8,#a8a8a8)!important;box-shadow:0 8px 32px rgba(0,0,0,.25),inset 0 2px 6px rgba(255,255,255,.4)!important}
-.coin-visual.penny{background:linear-gradient(135deg,#b87333,#d4956a,#8b5e3c)!important}
-.coin-visual.nickel{background:linear-gradient(135deg,#8e9ea0,#c8d4d6,#7a8a8c)!important}
-.coin-visual.dime{background:linear-gradient(135deg,#9e9e9e,#d8d8d8,#888)!important}
-.coin-visual.quarter{background:linear-gradient(135deg,#a0a8b0,#dce4ec,#8090a0)!important}
-.coin-lbl{font-size:1.3rem!important;font-weight:900!important;color:#555!important;letter-spacing:.05em}
-/* Question text bigger */
-.game-q{font-size:clamp(1.5rem,5vw,2.1rem)!important;font-weight:900!important;line-height:1.25!important}
-/* Game card polish */
-.game-card{box-shadow:0 10px 40px rgba(0,0,0,.13)!important;border-radius:32px!important;padding:28px 20px!important}
-/* Progress bar thicker */
-.prog-bar,.progress-bar{height:14px!important;border-radius:10px!important}
-/* Lives bigger */
-.og-lbl,.og-val{font-size:1.1rem!important;font-weight:900!important}
-/* Correct/wrong flash — BIGGER animations */
-@keyframes bigPop{0%{transform:scale(1)}35%{transform:scale(1.18)}65%{transform:scale(.94)}100%{transform:scale(1)}}
-@keyframes bigShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-12px)}40%{transform:translateX(12px)}60%{transform:translateX(-9px)}80%{transform:translateX(9px)}}
-.ans-btn.correct-flash{animation:bigPop .5s ease!important;background:linear-gradient(135deg,#16a34a,#22c55e)!important;color:#fff!important}
-.ans-btn.wrong-flash{animation:bigShake .5s ease!important;background:linear-gradient(135deg,#dc2626,#ef4444)!important;color:#fff!important}
-/* Journey nodes bigger */
-.jnode{width:100px!important;height:100px!important;font-size:1.5rem!important;font-weight:800!important}
-/* Activity card icons */
-.act-icon{font-size:2.8rem!important;display:block!important;margin-bottom:4px!important}
-.act-name{font-weight:800!important;font-size:1rem!important}
-/* Feedback message overlay */
-.feedback-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.75);color:#fff;padding:18px 36px;border-radius:24px;font-size:2rem;font-weight:900;z-index:9999;pointer-events:none;transition:transform .15s ease,opacity .3s ease;opacity:0}
-.feedback-msg.show{transform:translate(-50%,-50%) scale(1);opacity:1}
-/* Mascot reaction */
-.leo-react{transition:transform .2s ease;display:inline-block}
-.leo-react.happy{animation:leoBounce .5s ease}
-.leo-react.sad{animation:leoShake .4s ease}
-@keyframes leoBounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}70%{transform:translateY(-6px)}}
-@keyframes leoShake{0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}70%{transform:rotate(12deg)}}
-/* Coin display container */
-.coin-display{display:flex;flex-direction:column;align-items:center;gap:10px!important;padding:12px 0!important}
-/* Score area  */
-.score-val{font-size:1.5rem!important;font-weight:900!important}
+/* Tablet layout: 3-column act-grid at 640px+ */
+@media(min-width:640px){
+  .act-grid{grid-template-columns:repeat(3,1fr);gap:16px;max-width:640px;margin:0 auto}
+  .act-card{padding:24px 16px}
+  .act-icon{font-size:3.4rem}
+  .act-name{font-size:1.2rem}
+  .screen{padding-left:24px;padding-right:24px}
+  .game-card{max-width:580px}
+  .ans-btn{padding:18px 30px;font-size:2rem}
+}
 
-/* === END SCREEN CSS === */
-#end-screen{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#7c3aed,#db2877);z-index:10000;flex-direction:column;align-items:center;justify-content:center;font-family:inherit}
-#end-screen.show{display:flex}
-.end-inner{text-align:center;color:#fff;padding:32px 20px;max-width:440px;width:100%}
-.end-title{font-size:2.2rem;font-weight:900;margin-bottom:8px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
-.end-subtitle{font-size:1rem;opacity:.85;margin-bottom:22px}
-.end-stars{font-size:3.2rem;margin-bottom:18px;letter-spacing:4px;display:block}
-.end-stars span{display:inline-block;opacity:0;transform:scale(0);transition:none}
-.end-stars span.pop{animation:starPop .45s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes starPop{to{opacity:1;transform:scale(1)}}
-.end-score{font-size:1.5rem;font-weight:800;background:rgba(255,255,255,.2);border-radius:16px;padding:10px 26px;margin-bottom:26px;display:inline-block}
-.end-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.end-btn{padding:13px 26px;border-radius:50px;border:none;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.end-btn:hover{transform:scale(1.06)}
-.end-btn.primary{background:#fff;color:#7c3aed}
-.end-btn.secondary{background:rgba(255,255,255,.22);color:#fff;border:2px solid rgba(255,255,255,.45)}
+/* Large tablet / landscape: 4-col at 900px+ */
+@media(min-width:900px){
+  .act-grid{grid-template-columns:repeat(4,1fr);max-width:860px}
+}
+
+/* Ensure journey map nodes are tap-friendly on touch */
+.jnode{min-width:56px;min-height:56px}
+
+/* iOS bottom home indicator clearance for fixed bottom elements */
+.next-btn,.challenge-entry-btn{
+  margin-bottom:env(safe-area-inset-bottom,0px);
+}
 </style>
 </head>
 <body>
@@ -936,8 +897,7 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
 
 <!-- ════════════ SCREEN: WELCOME ════════════ -->
 <div class="screen active" id="s-welcome">
-  
-  <div class="app-logo">🦁 Learnly</div>
+  <div class="app-logo" id="welcome-buddy">🦁 Learnly</div>
   <div class="app-tagline">Learn with Leo, your study buddy!</div>
   <div style="background:linear-gradient(135deg,#FFF3EE,#FFE5D5);border-radius:20px;padding:12px 20px;max-width:380px;width:100%;text-align:center;border:2px solid #FFD3C2">
     <div style="font-size:.78rem;font-weight:900;color:#FF6B35;letter-spacing:1px;text-transform:uppercase">Your guide</div>
@@ -1032,6 +992,16 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
   <!-- JOURNEY MAP (hidden by default) -->
   <div id="journey-map"></div>
 
+  <!-- DAILY CHALLENGE CARD -->
+  <div id="daily-challenge-banner" onclick="startDailyChallenge()" style="margin:0 0 12px;border-radius:20px;background:linear-gradient(135deg,#FF6B35,#FF8C42,#FFB347);padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;touch-action:manipulation;min-height:60px;box-shadow:0 4px 16px rgba(255,107,53,.35);position:relative;overflow:hidden">
+    <div style="font-size:2rem;flex-shrink:0">⚡</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:1rem;font-weight:900;color:white;line-height:1.2" id="dc-title">Daily Challenge</div>
+      <div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88);margin-top:2px" id="dc-sub">5 mixed questions · Special reward!</div>
+    </div>
+    <div style="font-size:1.5rem;flex-shrink:0" id="dc-badge">🏅</div>
+  </div>
+
   <!-- GRID SUBJECTS (default) -->
   <div id="hub-grid">
 
@@ -1046,6 +1016,8 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
       <div class="act-card ac-math1" onclick="launch('coins')"><span class="act-icon">🪙</span><div class="act-name">Coin World</div><div class="act-desc">Name that coin!</div></div>
       <div class="act-card ac-math2" onclick="launch('patterns')"><span class="act-icon">🔵</span><div class="act-name">Pattern Play</div><div class="act-desc">What comes next?</div></div>
       <div class="act-card ac-math3" onclick="launch('onemore')"><span class="act-icon">🔢</span><div class="act-name">One More/Less</div><div class="act-desc">1 more or 1 less!</div></div>
+      <div class="act-card ac-math4" onclick="launch('subtract')"><span class="act-icon">➖</span><div class="act-name">Subtracting</div><div class="act-desc">Take some away!</div></div>
+      <div class="act-card ac-math1" id="ac-multiply" onclick="launchMultiply()"><span class="act-icon">✖️</span><div class="act-name">Multiply</div><div class="act-desc" id="multiply-desc">Groups × groups!</div></div>
     </div>
   </div>
 
@@ -1169,6 +1141,24 @@ body{background:linear-gradient(160deg,#fff9f0 0%,#f0f4ff 100%)!important}
   <div class="fb-bar" id="addition-fb"></div>
   <div class="answers" id="addition-ans"></div>
   <button class="next-btn" id="addition-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+
+<div class="screen game-screen" id="s-subtract">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="subtract-pf" style="width:0%"></div></div><div class="prog-lbl" id="subtract-pl">0/5</div></div>
+  <div class="game-q" id="subtract-q"></div>
+  <div class="game-card" id="subtract-area"></div>
+  <div class="fb-bar" id="subtract-fb"></div>
+  <div class="answers" id="subtract-ans"></div>
+  <button class="next-btn" id="subtract-nx" onclick="nextQ()">Next ➡️</button>
+</div>
+
+<div class="screen game-screen" id="s-multiply">
+  <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="multiply-pf" style="width:0%"></div></div><div class="prog-lbl" id="multiply-pl">0/5</div></div>
+  <div class="game-q" id="multiply-q"></div>
+  <div class="game-card" id="multiply-area"></div>
+  <div class="fb-bar" id="multiply-fb"></div>
+  <div class="answers" id="multiply-ans"></div>
+  <button class="next-btn" id="multiply-nx" onclick="nextQ()">Next ➡️</button>
 </div>
 
 <div class="screen game-screen" id="s-shapes">
@@ -1857,7 +1847,9 @@ const APP = {
   challengeTimerInt: null,
   chalCorrect:   0,
   chalBonus:     0,   // stars earned in challenge
-  chalMulti:     1    // current multiplier (increases with streak)
+  chalMulti:     1,   // current multiplier (increases with streak)
+  wrongCount:    0,   // wrong answers on current question (for hint system)
+  usedQ:         new Set()
 };
 
 // ══════════════════════════════════════════════
@@ -2214,42 +2206,27 @@ function speak(text){
   const clean=cleanForSpeech(text);
   if(!clean)return;
   window.speechSynthesis.cancel();
-  function _pickVoice(u){
-    var vs=window.speechSynthesis.getVoices();
-    if(APP._voice){u.voice=APP._voice;return;}
-    var names=['Samantha','Sandy','Google US English','Karen','Aria','Moira','Zira','Flo','Shelley','Eddy'];
-    var best=null;
-    for(var i=0;i<names.length;i++){
-      best=vs.find(function(v){return v.name.indexOf(names[i])>=0&&v.lang.indexOf('en')===0;});
-      if(best)break;
-    }
-    if(!best)best=vs.find(function(v){return !v.localService&&v.lang.indexOf('en')===0;});
-    if(!best)best=vs.find(function(v){return v.lang==='en-US';});
-    if(!best)best=vs.find(function(v){return v.lang.indexOf('en')===0;});
-    if(best){APP._voice=best;u.voice=best;}
-  }
-  function _fire(){
-    var u=new SpeechSynthesisUtterance(clean);
-    u.lang='en-US';u.rate=0.86;u.pitch=1.08;
-    _pickVoice(u);
-    window.speechSynthesis.speak(u);
-    if(window.speechSynthesis.paused)window.speechSynthesis.resume();
-  }
-  var vs=window.speechSynthesis.getVoices();
-  if(vs&&vs.length>0){
-    setTimeout(_fire,50);
-  } else {
-    var _done=false;
-    window.speechSynthesis.onvoiceschanged=function(){
-      if(_done)return;_done=true;
-      window.speechSynthesis.onvoiceschanged=null;
-      setTimeout(_fire,50);
-    };
-    setTimeout(function(){if(!_done){_done=true;_fire();}},400);
-  }
+  const u=new SpeechSynthesisUtterance(clean);
+  u.lang='en-US';
+  // rate=1.0 is the voice's natural speaking speed — least robotic
+  // pitch=1.0 is the voice's natural pitch — sounds most human
+  // Going slower (0.8-0.9) actually makes the prosody pattern more noticeable = more robotic
+  u.rate=1.0; u.pitch=1.0; u.volume=1;
+  const v=getKidVoice(); if(v)u.voice=v;
+  const btn=document.getElementById('global-speak');
+  if(btn){btn.classList.add('speaking');u.onend=()=>btn.classList.remove('speaking');u.onerror=()=>btn.classList.remove('speaking');}
+  // Small delay lets the audio context settle — prevents cut-off on first word
+  setTimeout(()=>window.speechSynthesis.speak(u), 80);
 }
 function speakCurrentQ(){if(_curQ&&!isMuted())speak(_curQ);}
-if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.addEventListener('voiceschanged',()=>window.speechSynthesis.getVoices());}
+if(window.speechSynthesis){
+  // Pre-load voices (Android/desktop loads sync; iOS requires user gesture then async event)
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.addEventListener('voiceschanged',()=>{window.speechSynthesis.getVoices();});
+  // iOS Safari: force voice list refresh on first touch
+  const _iosVoiceInit=()=>{window.speechSynthesis.getVoices();document.removeEventListener('touchstart',_iosVoiceInit);};
+  document.addEventListener('touchstart',_iosVoiceInit,{once:true,passive:true});
+}
 
 // ══════════════════════════════════════════════
 //  KID PROFILES
@@ -2302,8 +2279,15 @@ function switchKid(id){
   const kids=getKids();
   const kid=kids.find(k=>k.id===id);
   if(kid){
+    // Clear game state first to avoid stale data bleeding between profiles
+    clearInterval(APP.timerInterval); APP.timerInterval=null;
+    APP.game=null; APP.qNum=0; APP.correct=0; APP.canAnswer=true;
+    APP.bonusStars=0; APP.firstTry=true; APP.streakMilestones=[];
+    APP.challengeMode=false; APP.usedQ=new Set(); APP.wrongCount=0;
+    // Load new kid state
     APP.playerName=kid.name; APP.stars=kid.stars||0; APP.level=kid.level||1; APP.streak=kid.streak||0;
     localStorage.setItem('bs_name',kid.name);
+    localStorage.setItem('bs_level',kid.level||1);
     updateTopBar();
   }
   renderKidsParent();
@@ -2341,8 +2325,14 @@ function openVoicePicker(){
   const modal=document.getElementById('voice-modal'),list=document.getElementById('voice-list');
   list.innerHTML='';
   if(!window.speechSynthesis){list.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No TTS on this browser.<br>Try Chrome or Safari.</div>';modal.classList.add('show');return;}
-  const voices=window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('en'));
-  if(!voices.length){list.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No English voices found.</div>';modal.classList.add('show');return;}
+  let voices=window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('en'));
+  if(!voices.length){
+    // iOS: voices load async after user gesture — retry once
+    list.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">Loading voices…</div>';
+    modal.classList.add('show');
+    setTimeout(()=>openVoicePicker(),400);
+    return;
+  }
   const cur=_selVoice||(getKidVoice()?getKidVoice().name:'');
   voices.forEach(v=>{
     const isSel=v.name===cur;
@@ -2468,6 +2458,7 @@ function goToHub(){
   }
   document.getElementById('hub-buddy').textContent=THEMES[APP.theme].buddy;
   document.getElementById('hub-title').textContent=`Hi ${APP.playerName}! What shall we learn?`;
+  refreshDCBanner();
   _updateMeritHubDisplay();
   stopSmartHUD();
   showScreen('s-hub');
@@ -2486,7 +2477,7 @@ function setTheme(t,el){
   sndClick(); APP.theme=t;
   el.closest('.grid4').querySelectorAll('.pick-card').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
-  document.getElementById('welcome-buddy').textContent=THEMES[t].buddy;
+  document.getElementById('welcome-buddy').textContent=THEMES[t].buddy+' Learnly';
 }
 function setLevel(n,el){
   sndClick();
@@ -2511,6 +2502,28 @@ function saveName(){
   document.getElementById('name-modal').classList.remove('show');
   loadPlayerState(); goToHub();
 }
+// ── Daily Streak (calendar-day based) ──
+function getTodayStr(){ return new Date().toISOString().slice(0,10); }
+function getYesterdayStr(){
+  const d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10);
+}
+function getDayStreak(){ return parseInt(localStorage.getItem('learnly_dayStreak')||'0',10); }
+function getLastPlayDate(){ return localStorage.getItem('learnly_lastPlayDate')||''; }
+function checkAndUpdateDayStreak(){
+  const today=getTodayStr(), last=getLastPlayDate();
+  if(last===today) return; // already counted today
+  if(last===getYesterdayStr()){
+    // Consecutive day — increment
+    const s=getDayStreak()+1;
+    localStorage.setItem('learnly_dayStreak',s);
+  } else {
+    // Gap or first time — reset to 1
+    localStorage.setItem('learnly_dayStreak','1');
+  }
+  localStorage.setItem('learnly_lastPlayDate',today);
+  updateTopBar();
+}
+
 function loadPlayerState(){
   const p=getOrCreatePlayer(APP.playerName);
   APP.stars=p.stars||0; APP.streak=0;
@@ -2523,6 +2536,8 @@ function loadPlayerState(){
 //  SESSION TIMER
 // ══════════════════════════════════════════════
 function startTimer(){
+  // Don't show parent time-limit bar during challenge mode
+  if(APP.challengeMode || document.body.classList.contains('challenge-active')) return;
   const s=getSettings(); const mins=s.timeLimit!==undefined?s.timeLimit:20;
   if(!mins)return; // unlimited
   clearInterval(APP.timerInterval);
@@ -2555,13 +2570,13 @@ function showBreakScreen(){
 function launch(game){
   sndClick();
   const s=getSettings();
-  const blocked={'counting':'math','addition':'math','shapes':'math','compare':'math','letters':'reading','words':'reading','colors':'science','animals':'science','weather':'science','experiment':'science','coins':'math','patterns':'math','onemore':'math','space':'science','physics':'science','bodyscience':'science','nature':'science','rhymes':'reading','phonics':'reading','geography':'world','flags':'world','directions':'world','landmarks':'world','music':'arts','colormix':'arts','time':'life','calendar':'life','money':'life','sorting':'life'};
+  const blocked={'counting':'math','addition':'math','shapes':'math','compare':'math','letters':'reading','words':'reading','colors':'science','animals':'science','weather':'science','experiment':'science','coins':'math','patterns':'math','onemore':'math','subtract':'math','multiply':'math','space':'science','physics':'science','bodyscience':'science','nature':'science','rhymes':'reading','phonics':'reading','geography':'world','flags':'world','directions':'world','landmarks':'world','music':'arts','colormix':'arts','time':'life','calendar':'life','money':'life','sorting':'life'};
   const subj=blocked[game];
   const knownSubj=['math','reading','science'];if(knownSubj.includes(subj)&&s[subj]===false){speak('This subject is turned off. Ask a parent to enable it.');return;}
   APP.game=game; APP.qNum=0; APP.correct=0; APP.canAnswer=true;
-  APP.bonusStars=0; APP.firstTry=true; APP.streakMilestones=[];
+  APP.bonusStars=0; APP.firstTry=true; APP.streakMilestones=[]; APP.wrongCount=0;
   APP.challengeMode=false; APP.usedQ=new Set();
-  const tqMap={'coins':8,'patterns':6,'onemore':8,'space':8,'physics':8,'bodyscience':8,'nature':8,'rhymes':8,'phonics':8,'geography':8,'flags':8,'directions':8,'landmarks':6,'music':8,'colormix':6,'time':8,'calendar':8,'money':8,'sorting':8};
+  const tqMap={'coins':8,'patterns':6,'onemore':8,'space':8,'physics':8,'bodyscience':8,'nature':8,'rhymes':8,'phonics':8,'geography':8,'flags':8,'directions':8,'landmarks':6,'music':8,'colormix':6,'time':8,'calendar':8,'money':8,'sorting':8,'subtract':8,'multiply':8};
   if(tqMap[game]) APP.totalQ=tqMap[game];
   startSmartHUD();
   setProgress(); genQ();
@@ -2573,7 +2588,7 @@ function setProgress(){
   document.getElementById(g+'-pl').textContent=APP.qNum+'/'+APP.totalQ;
 }
 function nextQ(){
-  sndClick(); APP.qNum++; APP.canAnswer=true;
+  sndClick(); APP.qNum++; APP.canAnswer=true; APP.wrongCount=0;
   document.getElementById(APP.game+'-nx').classList.remove('show');
   const fb=document.getElementById(APP.game+'-fb');
   fb.className='fb-bar'; fb.textContent='';
@@ -2628,7 +2643,7 @@ function _chalAward(btn){
 }
 
 function onAnswer(isCorrect, btn){
-  if(!APP.canAnswer)return; APP.canAnswer=false;if(!isCorrect&&!APP._mkBtnPF){APP._wc=(APP._wc||0)+1;if(APP._wc>=2){APP._hintTimer=setTimeout(function(){APP._hintTimer=null;var _a=document.getElementById(APP.game+'-ans');if(_a){var _c=_a.querySelector('[data-correct="1"]');if(_c)_c.classList.add('hint');}},420);}}else{APP._wc=0;}
+  if(!APP.canAnswer)return; APP.canAnswer=false;
   // Update SmartScore
   updateSmartScore(isCorrect);
   // Stop challenge timer
@@ -2650,17 +2665,26 @@ function onAnswer(isCorrect, btn){
       const isStreak=APP.streak>=3;
       fb.textContent=pick(['✓ Correct!','✓ Nice one!','✓ Right!','✓ Yes!','✓ Paw-some!','✓ ROAR!']);
       fb.className='fb-bar show good';
-      starPop(btn); updateTopBar(); updatePlayerStars(APP.playerName,1);
+      starPop(btn); updateTopBar(); updatePlayerStars(APP.playerName,1); checkAndUpdateDayStreak();
       setTimeout(()=>maybeLeoCorrect(isStreak),100);
     }
   } else {
-    sndNo(); APP.streak=0; APP.firstTry=false;
+    sndNo(); APP.streak=0; APP.firstTry=false; APP.wrongCount++;
     if(APP.challengeMode) APP.chalMulti=1; // reset multiplier on wrong
     if(btn)btn.classList.add('wrong');
     fb.textContent=pick(['Not quite — try the next one!','Almost! Keep going!','Give it another shot!']);
     fb.className='fb-bar show bad';
     updateTopBar();
     setTimeout(()=>maybeLeoWrong(),100);
+    // Hint after 2 wrong: highlight correct answer
+    if(APP.wrongCount>=2){
+      const ansContainer=document.querySelector('.answers:not([style*="display:none"])');
+      if(ansContainer){
+        ansContainer.querySelectorAll('.ans-btn').forEach(b=>{
+          if(b.dataset.v && b.dataset.v===(btn&&btn.dataset._correct||'')) b.classList.add('hint');
+        });
+      }
+    }
   }
   nx.classList.add('show');
 }
@@ -2701,7 +2725,10 @@ function onCmpAnswer(clicked,other,isCorrect){
 }
 function updateTopBar(){
   document.getElementById('top-stars').textContent='⭐ '+APP.stars;
-  document.getElementById('top-streak').textContent=APP.streak>=3?'🔥'+APP.streak:'';
+  const dayS=getDayStreak();
+  const sessionStreak=APP.streak>=3?'🔥'+APP.streak:'';
+  const dayBadge=dayS>=2?(' 📅'+dayS+'d'):'';
+  document.getElementById('top-streak').textContent=sessionStreak+(sessionStreak&&dayBadge?' ':'')+(sessionStreak?'':dayBadge?('📅'+dayS+'d'):'');
   // Auto-save progress to active kid profile
   const activeId=getActiveKidId();
   if(activeId){
@@ -2918,6 +2945,131 @@ function genQ(){
     case 'calendar':    genCalendar();    break;
     case 'money':       genMoney();       break;
     case 'sorting':     genSorting();     break;
+    case 'subtract':    genSubtract();    break;
+    case 'multiply':    genMultiply();    break;
+  }
+}
+
+// — SUBTRACTION —
+function genSubtract(){
+  const lev=lv();
+  const maxA=Math.min(lev.cMax||10,15); // cap for subtraction visual
+  let a,b,diff,_t=0;
+  do{
+    a=ri(2,maxA+1); b=ri(1,a); diff=a-b; _t++;
+  }while(APP.usedQ&&APP.usedQ.has('sb:'+a+'-'+b)&&_t<20);
+  if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('sb:'+a+'-'+b);}
+  const e=rEmoji();
+  const opts=makeOpts(diff,0,maxA,3);
+  setQ('subtract-q','Take some away! ➖'); clearArea('subtract-area'); clearAns('subtract-ans');
+  const area=document.getElementById('subtract-area');
+  const row=document.createElement('div'); row.className='add-row';
+  row.style.cssText='flex-wrap:wrap;gap:6px;justify-content:center';
+  // Show group A, then a "crossed out" group of B
+  const gA=document.createElement('div');gA.className='add-group';
+  for(let i=0;i<a;i++){
+    const s=document.createElement('span');s.textContent=e;
+    s.style.cssText=`animation:item-pop .3s ease ${i*.07}s both;opacity:0;font-size:1.6rem;`;
+    if(i>=diff){ // these get crossed out
+      s.style.textDecoration='line-through'; s.style.opacity='0.35';
+    }
+    gA.appendChild(s);
+  }
+  const minus=document.createElement('div');minus.className='math-op';minus.textContent='−';
+  const numB=document.createElement('div');numB.className='math-op';numB.style.cssText='font-size:2rem;font-weight:900;color:var(--red)';numB.textContent=b;
+  const eq=document.createElement('div');eq.className='math-op';eq.textContent='=';
+  const qm=document.createElement('div');qm.className='math-op math-qm';qm.textContent='?';
+  [gA,minus,numB,eq,qm].forEach(el=>row.appendChild(el)); area.appendChild(row);
+  const ans=document.getElementById('subtract-ans');
+  opts.forEach(o=>{const btn=mkBtn(o,()=>{if(o!==diff)hintWrong('subtract-ans',diff);onAnswer(o===diff,btn);});btn.dataset.v=o;if(o===diff)btn.dataset.correct='1';ans.appendChild(btn);});
+  speak(`${a} minus ${b} equals what?`);
+}
+
+// — MULTIPLICATION —
+function genMultiply(){
+  const lev=lv();
+  // Scale multipliers by level: Grade 2+ gets bigger numbers
+  const maxFactor=APP.level>=5?10:APP.level>=4?8:5;
+  let a,b,prod,_t=0;
+  do{
+    a=ri(2,maxFactor+1); b=ri(2,maxFactor+1); prod=a*b; _t++;
+  }while(APP.usedQ&&APP.usedQ.has('mx:'+a+'x'+b)&&_t<20);
+  if(APP.usedQ){if(_t>=20)APP.usedQ.clear();APP.usedQ.add('mx:'+a+'x'+b);}
+  const e=rEmoji();
+  const opts=makeOpts(prod,2,maxFactor*maxFactor+1,3);
+  setQ('multiply-q',`${a} groups of ${b} — how many total? ✖️`);
+  clearArea('multiply-area'); clearAns('multiply-ans');
+  const area=document.getElementById('multiply-area');
+  // Dot grid visual: a rows × b columns
+  const grid=document.createElement('div');
+  grid.style.cssText=`display:grid;grid-template-columns:repeat(${Math.min(b,10)},1fr);gap:4px;max-width:280px;margin:0 auto;`;
+  let delay=0;
+  for(let r=0;r<a;r++){
+    for(let c=0;c<b;c++){
+      const s=document.createElement('span');
+      s.textContent=e;
+      s.style.cssText=`font-size:${b<=6?'1.5rem':'1.1rem'};animation:item-pop .25s ease ${delay*0.04}s both;opacity:0;text-align:center`;
+      grid.appendChild(s); delay++;
+    }
+  }
+  area.appendChild(grid);
+  const eq=document.createElement('div');
+  eq.style.cssText='text-align:center;font-size:1.4rem;font-weight:900;color:var(--blue);margin-top:8px';
+  eq.textContent=`${a} × ${b} = ?`;
+  area.appendChild(eq);
+  const ans=document.getElementById('multiply-ans');
+  opts.forEach(o=>{const btn=mkBtn(o,()=>{if(o!==prod)hintWrong('multiply-ans',prod);onAnswer(o===prod,btn);});btn.dataset.v=o;if(o===prod)btn.dataset.correct='1';ans.appendChild(btn);});
+  speak(`${a} times ${b} equals what?`);
+}
+
+// — DAILY CHALLENGE —
+const DC_GAMES=['addition','subtract','colors','animals','shapes','letters','words','weather','geography','flags'];
+function launchMultiply(){
+  if(APP.level<4){
+    speak('Multiplication unlocks at Grade 2! Keep earning stars!');
+    const d=document.getElementById('multiply-desc');
+    if(d){d.textContent='🔒 Unlock at Grade 2';setTimeout(()=>{d.textContent='Groups × groups!';},2000);}
+    return;
+  }
+  launch('multiply');
+}
+
+function startDailyChallenge(){
+  sndClick();
+  // Pick 5 random games from the pool
+  const games=shuf(DC_GAMES).slice(0,5);
+  APP._dcGames=games; APP._dcIdx=0;
+  APP.game=games[0];
+  APP.qNum=0; APP.totalQ=5; APP.correct=0; APP.canAnswer=true;
+  APP.bonusStars=0; APP.firstTry=true; APP.streakMilestones=[]; APP.wrongCount=0;
+  APP.challengeMode=true; APP.usedQ=new Set();
+  APP.chalCorrect=0; APP.chalBonus=0; APP.chalMulti=1;
+  document.body.classList.add('challenge-active');
+  startSmartHUD();
+  // Store today so we know it was completed
+  localStorage.setItem('learnly_lastDC', new Date().toISOString().slice(0,10));
+  setProgress(); genQ();
+  showScreen('s-'+APP.game);
+  speak('Daily challenge time! Answer 5 questions to win a special badge!');
+}
+function checkDCCompleted(){
+  const today=new Date().toISOString().slice(0,10);
+  return localStorage.getItem('learnly_lastDC')===today;
+}
+function refreshDCBanner(){
+  const done=checkDCCompleted();
+  const title=document.getElementById('dc-title');
+  const sub=document.getElementById('dc-sub');
+  const badge=document.getElementById('dc-badge');
+  if(!title)return;
+  if(done){
+    title.textContent='✅ Daily Challenge Done!';
+    sub.textContent='Come back tomorrow for a new challenge!';
+    if(badge)badge.textContent='🏆';
+  } else {
+    title.textContent='Daily Challenge';
+    sub.textContent='5 mixed questions · Special reward!';
+    if(badge)badge.textContent='🏅';
   }
 }
 
@@ -2941,7 +3093,14 @@ function setQ(id,text){document.getElementById(id).textContent=text;_curQ=text;}
 function clearArea(id){document.getElementById(id).innerHTML='';}
 function clearAns(id){document.getElementById(id).innerHTML='';}
 function hintWrong(ansId,correct){
-  setTimeout(()=>document.querySelectorAll('#'+ansId+' .ans-btn').forEach(b=>{if(b.dataset.v==correct)b.classList.add('hint');}),380);
+  // Mark correct button for the 2-wrong auto-hint system
+  document.querySelectorAll('#'+ansId+' .ans-btn').forEach(b=>{
+    if(b.dataset.v==correct){b.dataset.correct='1';}else{delete b.dataset.correct;}
+  });
+  // Immediate hint if wrongCount already >= 2
+  if(APP.wrongCount>=2){
+    setTimeout(()=>document.querySelectorAll('#'+ansId+' .ans-btn').forEach(b=>{if(b.dataset.correct==='1')b.classList.add('hint');}),80);
+  }
 }
 
 // — COUNTING —
@@ -2956,7 +3115,7 @@ function genCounting(){
   const area=document.getElementById('counting-area');
   for(let i=0;i<count;i++){const d=document.createElement('div');d.className='emoji-item';d.textContent=e;d.style.cssText=`opacity:0;animation:item-pop .35s ease ${i*.08}s both`;d.onclick=()=>{sndCount();d.classList.toggle('counted');};area.appendChild(d);}
   const ans=document.getElementById('counting-ans');
-  opts.forEach(o=>{var b=mkBtn(o,()=>{if(o!==count)hintWrong('counting-ans',count);onAnswer(o===count,b);});b.dataset.v=o;ans.appendChild(b);});
+  opts.forEach(o=>{const b=mkBtn(o,()=>{if(o!==count)hintWrong('counting-ans',count);onAnswer(o===count,b);});b.dataset.v=o;ans.appendChild(b);});
   speak(q);
 }
 
@@ -2998,7 +3157,7 @@ function genShapes(){
   setQ('shapes-q','What shape is this? 👆');
   document.getElementById('shapes-area').innerHTML=`<div class="shape-box" style="animation:pop-in .45s ease both">${correct.svg}</div>`;
   const ans=document.getElementById('shapes-ans'); ans.innerHTML='';
-  all.forEach(sh=>{var b=mkBtn(sh.e+' '+sh.n,()=>onAnswer(sh.n===correct.n,b),true);ans.appendChild(b);});
+  all.forEach(sh=>{const b=mkBtn(sh.e+' '+sh.n,()=>onAnswer(sh.n===correct.n,b),true);ans.appendChild(b);});
   speak('What shape is this?');
 }
 
@@ -3043,12 +3202,12 @@ function genLetters(){
   if(ri(0,2)===0){
     const q='What letter is this? 👆'; setQ('letters-q',q);
     area.innerHTML=`<div class="big-letter" style="animation:pop-in .4s ease both">${correct.l}</div>`;
-    opts.forEach(o=>{var b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
     speak('What letter is this?');
   } else {
     const q=`What letter starts "${correct.w}"?`; setQ('letters-q',q);
     area.innerHTML=`<div style="text-align:center"><div style="font-size:min(5rem,22vw);animation:pop-in .4s ease both">${correct.e}</div><div style="font-size:1.4rem;font-weight:900;color:#777;margin-top:8px">${correct.w}</div></div>`;
-    opts.forEach(o=>{var b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o.l,()=>onAnswer(o.l===correct.l,b));ans.appendChild(b);});
     speak(`What letter starts ${correct.w}?`);
   }
 }
@@ -3062,7 +3221,7 @@ function genWords(){
   setQ('words-q','What word matches this picture? 👆');
   document.getElementById('words-area').innerHTML=`<div style="font-size:min(5.5rem,22vw);animation:pop-in .4s ease both">${item.e}</div>`;
   const ans=document.getElementById('words-ans'); ans.innerHTML='';
-  opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===item.w,b));b.style.cssText+=';font-size:1.3rem;letter-spacing:2px;';ans.appendChild(b);});
+  opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===item.w,b));b.style.cssText+=';font-size:1.3rem;letter-spacing:2px;';ans.appendChild(b);});
   speak('What word matches this picture?');
 }
 
@@ -3079,12 +3238,12 @@ function genAnimals(){
   if(mode===0){
     const q=`What sound does a ${a.n} make? 🔊`; setQ('animals-q',q);
     const opts=shuf([a.sound,...a.x_s]);
-    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===a.sound,b));ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===a.sound,b));ans.appendChild(b);});
     speak(`What sound does a ${a.n} make?`);
   } else {
     const q=`Where does a ${a.n} live? 🏠`; setQ('animals-q',q);
     const opts=shuf([a.hab,...a.x_h]);
-    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===a.hab,b));ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===a.hab,b));ans.appendChild(b);});
     speak(`Where does a ${a.n} live?`);
   }
 }
@@ -3103,12 +3262,12 @@ function genWeather(){
     const q='What weather is this? ☁️'; setQ('weather-q',q);
     const wrongs=shuf(WEATHER.filter((_,i)=>i!==idx)).slice(0,2).map(x=>x.n);
     const opts=shuf([w.n,...wrongs]);
-    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===w.n,b));ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===w.n,b));ans.appendChild(b);});
     speak('What weather is this?');
   } else {
     setQ('weather-q',w.q);
     const opts=shuf([w.a,...w.x]);
-    opts.forEach(o=>{var b=mkBtn(o,()=>onAnswer(o===w.a,b),true);ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o,()=>onAnswer(o===w.a,b),true);ans.appendChild(b);});
     speak(w.q);
   }
 }
@@ -3125,7 +3284,7 @@ function genExperiment(){
   const ans=document.getElementById('experiment-ans'); ans.innerHTML='';
   const opts=shuf([ex.result,...ex.x]);
   const labels=isSinkFloat?{sink:'🪨 Sink',float:'🎈 Float'}:{hot:'🔥 Hot',cold:'🧊 Cold'};
-  opts.forEach(o=>{const label=labels[o]||o;var b=mkBtn(label,()=>onAnswer(o===ex.result,b));ans.appendChild(b);});
+  opts.forEach(o=>{const label=labels[o]||o;const b=mkBtn(label,()=>onAnswer(o===ex.result,b));ans.appendChild(b);});
   speak(ex.q);
 }
 
@@ -3164,7 +3323,7 @@ function genColors(){
   if(mode===0){
     setQ('colors-q','What color is this? 🎨');
     area.innerHTML=`<div class="color-swatch" style="background:${correct.h};width:min(155px,42vw);height:min(155px,42vw);border-radius:50%;box-shadow:0 8px 26px rgba(0,0,0,.18);animation:pop-in .45s ease both"></div>`;
-    opts.forEach(o=>{var b=mkBtn(o.n,()=>onAnswer(o.n===correct.n,b),true);ans.appendChild(b);});
+    opts.forEach(o=>{const b=mkBtn(o.n,()=>onAnswer(o.n===correct.n,b),true);ans.appendChild(b);});
     speak('What color is this?');
   } else {
     setQ('colors-q',`Tap the ${correct.n} circle! 🎨`);
@@ -4045,7 +4204,7 @@ function genCoins(){
   _curQ=qText;
 
   options.forEach(opt=>{
-    var b=mkBtn(opt, ()=>onAnswer(opt===correct, b));
+    const b=mkBtn(opt, ()=>onAnswer(opt===correct, b));
     b.dataset.v=opt;
     ans.appendChild(b);
   });
@@ -4154,7 +4313,7 @@ function genOneMore(){
     if(num<=10) div.appendChild(objRow);
     area.appendChild(div);
     opts.forEach(opt=>{
-      var b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
       b.dataset.v=opt;
       ans.appendChild(b);
     });
@@ -4176,7 +4335,7 @@ function genOneMore(){
     div.appendChild(numBox);
     area.appendChild(div);
     opts.forEach(opt=>{
-      var b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
+      const b=mkBtn(String(opt),()=>onAnswer(opt===correct,b));
       b.dataset.v=opt;
       ans.appendChild(b);
     });
@@ -4376,7 +4535,7 @@ function _simpleQ(game,qText,correct,wrongs){
   const opts=shuf([correct,...wrongs.slice(0,3)]);
   const ans=document.getElementById(g+'-ans');
   opts.forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===correct,b));
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4470,7 +4629,7 @@ function genRhymes(){
   const qText='Which word RHYMES with '+r.word+'?';
   setQ('rhymes-q',qText);
   opts.forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===r.rhyme,b));
+    const b=mkBtn(o,()=>onAnswer(o===r.rhyme,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText+' '+r.word);
@@ -4502,7 +4661,7 @@ function genPhonics(){
   setQ('phonics-q',qText);
   const ans=document.getElementById('phonics-ans');
   opts.forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===correct,b));
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4527,15 +4686,21 @@ function genFlags(){
   const f=FLAGS_DATA[idx];
   const area=document.getElementById('flags-area'); clearArea('flags-area'); clearArea('flags-ans');
   const d=document.createElement('div');
-  d.style.cssText='font-size:5rem;text-align:center;width:100%;animation:item-pop .3s ease';
-  d.textContent=f.flag; area.appendChild(d);
+  d.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;animation:item-pop .3s ease';
+  const flagSpan=document.createElement('div');
+  flagSpan.style.cssText='font-size:5rem;line-height:1.1;text-align:center';
+  flagSpan.textContent=f.flag;
+  const hintSpan=document.createElement('div');
+  hintSpan.style.cssText='font-size:.78rem;color:var(--muted);font-weight:700;letter-spacing:.03em;text-align:center;opacity:.75';
+  hintSpan.textContent=f.hint; // color hint helps Android where emoji flags may not render
+  d.appendChild(flagSpan); d.appendChild(hintSpan); area.appendChild(d);
   const qText='Which country does this flag belong to?';
   setQ('flags-q',qText);
   const wrongCountries=shuf(FLAGS_DATA.filter((_,i)=>i!==idx).map(x=>x.country)).slice(0,3);
   const opts=shuf([f.country,...wrongCountries]);
   const ans=document.getElementById('flags-ans');
   opts.forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===f.country,b));
+    const b=mkBtn(o,()=>onAnswer(o===f.country,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4581,28 +4746,50 @@ function genColorMix(){
   _simpleQ('colormix',c.q,c.a,shuf(c.w));
 }
 
-// TELLING TIME
+// TELLING TIME — SVG analog clock
+function makeClock(hour, mins){
+  const sz=180, cx=sz/2, cy=sz/2, r=sz/2-4;
+  const hDeg=(hour%12)*30+mins*0.5-90;
+  const mDeg=mins*6-90;
+  const rad=a=>a*Math.PI/180;
+  const hLen=r*0.55, mLen=r*0.78;
+  const hx=cx+Math.cos(rad(hDeg))*hLen, hy=cy+Math.sin(rad(hDeg))*hLen;
+  const mx=cx+Math.cos(rad(mDeg))*mLen, my=cy+Math.sin(rad(mDeg))*mLen;
+  let ticks='';
+  for(let i=0;i<12;i++){
+    const ang=rad(i*30-90), sw=i%3===0?3:1.5;
+    const inner=i%3===0?r-18:r-10, outer=r-3;
+    ticks+=`<line x1="${cx+Math.cos(ang)*inner}" y1="${cy+Math.sin(ang)*inner}" x2="${cx+Math.cos(ang)*outer}" y2="${cy+Math.sin(ang)*outer}" stroke="#333" stroke-width="${sw}" stroke-linecap="round"/>`;
+  }
+  let nums='';
+  [12,1,2,3,4,5,6,7,8,9,10,11].forEach((n,i)=>{
+    const ang=rad(i*30-90), nr=r-28;
+    nums+=`<text x="${cx+Math.cos(ang)*nr}" y="${cy+Math.sin(ang)*nr+5}" text-anchor="middle" font-size="14" font-weight="700" fill="#333">${n}</text>`;
+  });
+  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" style="display:block;margin:0 auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.18))"><circle cx="${cx}" cy="${cy}" r="${r}" fill="white" stroke="#222" stroke-width="4"/>${ticks}${nums}<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="#1565C0" stroke-width="7" stroke-linecap="round"/><line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="#0288D1" stroke-width="4" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="#1565C0"/></svg>`;
+}
 function genTime(){
   const hour=pick(TIME_HOURS);
   const mins=pick([0,15,30,45]);
-  const timeStr=hour+':'+(mins===0?'00':mins);
-  const correct=hour+(mins===0?' o\'clock':':'+mins);
-  const wrongs=shuf(TIME_HOURS.filter(h=>h!==hour)).slice(0,2).map(h=>h+(mins===0?' o\'clock':':'+mins));
-  {var _nx=(hour===12?1:hour+1)+(mins===0?' o\'clock':':'+mins);if(!wrongs.includes(_nx)){wrongs.push(_nx);}else{var _alt=hour>2?hour-1:hour+2;wrongs.push(_alt+(mins===0?' o\'clock':':'+mins));}}
+  const minStr=String(mins).padStart(2,'0');
+  const correctLabel=mins===0?hour+" o'clock":hour+':'+minStr;
+  const wrongLabels=shuf(TIME_HOURS.filter(h=>h!==hour)).slice(0,2).map(h=>mins===0?h+" o'clock":h+':'+minStr);
+  const altHour=hour===12?1:hour+1;
+  wrongLabels.push(mins===0?altHour+" o'clock":altHour+':'+minStr);
   const area=document.getElementById('time-area'); clearArea('time-area'); clearArea('time-ans');
-  const d=document.createElement('div');
-  d.style.cssText='font-size:3.5rem;font-weight:900;color:var(--blue);text-align:center;width:100%;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:20px;padding:16px';
-  d.textContent='🕐 '+timeStr; area.appendChild(d);
+  const wrapper=document.createElement('div');
+  wrapper.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;padding:6px 0';
+  wrapper.innerHTML=makeClock(hour,mins);
+  area.appendChild(wrapper);
   const qText='What time does the clock show?';
   setQ('time-q',qText);
   const ans=document.getElementById('time-ans');
-  shuf([correct,...wrongs.slice(0,3)]).forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===correct,b));
-    b.dataset.v=o; ans.appendChild(b);
+  shuf([correctLabel,...wrongLabels.slice(0,3)]).forEach(o=>{
+    const b=mkBtn(o,()=>{if(o!==correctLabel)hintWrong('time-ans',correctLabel);onAnswer(o===correctLabel,b);});
+    b.dataset.v=o; if(o===correctLabel)b.dataset.correct='1'; ans.appendChild(b);
   });
   speak(qText);
 }
-
 // DAYS & MONTHS (CALENDAR)
 function genCalendar(){
   const mode=pick(['day_next','day_before','month_next','month_number','season']);
@@ -4665,7 +4852,7 @@ function genMoney(){
   const wrongs=makeOpts(total,Math.max(1,total-20),total+25,4).filter(v=>v!==total).map(v=>v+'¢').slice(0,3);
   const ans=document.getElementById('money-ans');
   shuf([correct,...wrongs]).forEach(o=>{
-    var b=mkBtn(o,()=>onAnswer(o===correct,b));
+    const b=mkBtn(o,()=>onAnswer(o===correct,b));
     b.dataset.v=o; ans.appendChild(b);
   });
   speak(qText);
@@ -4866,182 +5053,6 @@ function setHubView(mode){
   }
 }
 
-
-;(function(){
-  var __mb=mkBtn;
-  mkBtn=function(label,cb,...rest){
-    clearTimeout(APP._hintTimer);APP._hintTimer=null;
-    var b=__mb(label,cb,...rest);
-    var _oa=onAnswer,_sp=(typeof speak==="function"?speak:null),_can=APP.canAnswer;
-    var _ok=false;
-    onAnswer=function(ic){_ok=ic;};
-    if(_sp)speak=function(){};
-    APP.canAnswer=true;APP._mkBtnPF=true;
-    try{cb();}catch(e){}
-    APP._mkBtnPF=false;
-    onAnswer=_oa;
-    if(_sp)speak=_sp;
-    APP.canAnswer=_can;
-    if(_ok)b.dataset.correct="1";
-    return b;
-  };
-})();
-
-/* === FINAL POLISH JS v2 === */
-(function(){
-  /* Web Audio SFX */
-  var _ac=null;
-  function getAC(){if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return _ac;}
-  function playTones(notes){
-    var a=getAC();if(!a)return;
-    if(a.state==='suspended')a.resume();
-    var t=a.currentTime;
-    notes.forEach(function(n){
-      var o=a.createOscillator(),g=a.createGain();
-      o.connect(g);g.connect(a.destination);
-      o.type=n[2]||'sine';
-      o.frequency.setValueAtTime(n[0],t+n[1]);
-      g.gain.setValueAtTime(0,t+n[1]);
-      g.gain.linearRampToValueAtTime(.32,t+n[1]+.01);
-      g.gain.exponentialRampToValueAtTime(.001,t+n[1]+n[3]);
-      o.start(t+n[1]);o.stop(t+n[1]+n[3]+.05);
-    });
-  }
-  function sfxCorrect(){playTones([[523.25,0,'sine',.18],[659.25,.1,'sine',.18],[783.99,.2,'sine',.22]]);}
-  function sfxWrong(){playTones([[349.23,0,'sawtooth',.12],[293.66,.1,'sawtooth',.12],[246.94,.2,'sawtooth',.16]]);}
-  function sfxComplete(){playTones([[523.25,0,'sine',.25],[659.25,.12,'sine',.25],[783.99,.24,'sine',.25],[1046.5,.38,'sine',.4]]);}
-
-  /* Feedback overlay */
-  var fbEl=document.getElementById('feedback-msg');
-  if(!fbEl){fbEl=document.createElement('div');fbEl.id='feedback-msg';fbEl.className='feedback-msg';document.body.appendChild(fbEl);}
-  var _fbMsgsOk=['Great job! ⭐','♥ You got it!','Awesome! 🎉','Perfect! 🚀','Way to go! 🏆'];
-  var _fbMsgsNo=['Try again! 💪','Keep going! 🌈','Almost! 😊','You can do it! ✨'];
-  function showFB(ok){
-    var list=ok?_fbMsgsOk:_fbMsgsNo;
-    fbEl.textContent=list[Math.floor(Math.random()*list.length)];
-    fbEl.classList.add('show');
-    clearTimeout(fbEl._t);
-    fbEl._t=setTimeout(function(){fbEl.classList.remove('show');},900);
-  }
-
-  /* End screen */
-  var endEl=document.getElementById('end-screen');
-  if(!endEl){
-    endEl=document.createElement('div');endEl.id='end-screen';
-    endEl.innerHTML='<div class="end-inner"><div class="end-title" id="end-title">Round Complete!</div><div class="end-subtitle" id="end-sub"></div><div class="end-stars" id="end-stars"></div><div class="end-score" id="end-score"></div><div class="end-btns"><button class="end-btn primary" onclick="window._endPlay()">&#9654; Play Again</button><button class="end-btn secondary" onclick="window._endBack()">🏠 Activities</button></div></div>';
-    document.body.appendChild(endEl);
-  }
-  var _sessC=0,_sessT=0,_prevProg='';
-  window._endPlay=function(){
-    endEl.classList.remove('show');
-    _sessC=0;_sessT=0;_prevProg='';
-    var b=document.querySelector('.back-btn');if(b)b.click();
-  };
-  window._endBack=function(){
-    endEl.classList.remove('show');
-    _sessC=0;_sessT=0;_prevProg='';
-    var b=document.querySelector('.back-btn');if(b)b.click();
-  };
-  function showEndScreen(){
-    sfxComplete();
-    var pct=_sessT>0?Math.round(_sessC/_sessT*100):0;
-    var stars=pct>=90?3:pct>=60?2:1;
-    var stEl=document.getElementById('end-stars');
-    var scEl=document.getElementById('end-score');
-    var tiEl=document.getElementById('end-title');
-    var suEl=document.getElementById('end-sub');
-    stEl.innerHTML='';
-    for(var i=0;i<3;i++){var s=document.createElement('span');s.textContent=i<stars?'⭐':'☆';stEl.appendChild(s);}
-    scEl.textContent=_sessC+' / '+_sessT+' correct';
-    tiEl.textContent=stars===3?'Amazing! 🏆':stars===2?'Great Job! 🎉':'Keep Practicing! 💪';
-    suEl.textContent=pct+'% — '+(stars===3?'You nailed it!':stars===2?'Well done!':'You'll get it next time!');
-    endEl.classList.add('show');
-    var spans=stEl.querySelectorAll('span');
-    spans.forEach(function(sp,idx){setTimeout(function(){sp.classList.add('pop');},idx*180+200);});
-  }
-
-  /* MutationObserver: watch .ans-btn class for correct/wrong flash */
-  var _aObs=new MutationObserver(function(muts){
-    muts.forEach(function(m){
-      if(m.type!=='attributes'||m.attributeName!=='class')return;
-      var cls=m.target.className||'';
-      if(cls.indexOf('correct-flash')>-1){sfxCorrect();showFB(true);_sessC++;_sessT++;}
-      else if(cls.indexOf('wrong-flash')>-1){sfxWrong();showFB(false);_sessT++;}
-    });
-  });
-  var _hooked=new WeakSet();
-  function hookBtns(){
-    document.querySelectorAll('.ans-btn').forEach(function(b){
-      if(!_hooked.has(b)){_hooked.add(b);_aObs.observe(b,{attributes:true,attributeFilter:['class']});}
-    });
-  }
-  hookBtns();
-  new MutationObserver(function(){hookBtns();}).observe(document.body,{childList:true,subtree:true});
-
-  /* MutationObserver: detect round completion via .prog-lbl */
-  function watchProg(){
-    var container=document.querySelector('.game-screen')||document.querySelector('.hub-body')||document.body;
-    new MutationObserver(function(){
-      var pl=document.querySelector('.prog-lbl');if(!pl)return;
-      var txt=pl.textContent.trim();
-      var m=txt.match(/(d+)s*/s*(d+)/);if(!m)return;
-      var cur=parseInt(m[1]),tot=parseInt(m[2]);
-      if(_prevProg){
-        var pm=_prevProg.match(/(d+)s*/s*(d+)/);
-        if(pm&&parseInt(pm[1])===parseInt(pm[2])&&parseInt(pm[2])>0&&cur===1&&_sessT>0){
-          showEndScreen();
-        }
-      }
-      _prevProg=txt;
-    }).observe(container,{childList:true,subtree:true,characterData:true});
-  }
-  watchProg();
-
-  /* Coin auto-coloring */
-  function applyCoinsColor(){
-    var qEl=document.getElementById('coins-q');
-    var aEl=document.getElementById('coins-area');
-    if(!qEl&&!aEl)return;
-    var txt=((qEl?qEl.textContent:'')+' '+(aEl?aEl.textContent:'')).toLowerCase();
-    var type='';
-    if(txt.indexOf('penny')>-1||txt.indexOf('pennies')>-1||txt.indexOf('1¢')>-1)type='penny';
-    else if(txt.indexOf('nickel')>-1||txt.indexOf('5¢')>-1)type='nickel';
-    else if(txt.indexOf('dime')>-1||txt.indexOf('10¢')>-1)type='dime';
-    else if(txt.indexOf('quarter')>-1||txt.indexOf('25¢')>-1)type='quarter';
-    if(!type&&aEl){
-      var w=aEl.querySelector('[class*="coin-"]');
-      if(w){var wc=w.className;
-        if(wc.indexOf('penny')>-1)type='penny';
-        else if(wc.indexOf('nickel')>-1)type='nickel';
-        else if(wc.indexOf('dime')>-1)type='dime';
-        else if(wc.indexOf('quarter')>-1)type='quarter';
-      }
-    }
-    if(type){
-      document.querySelectorAll('.coin-visual').forEach(function(v){
-        v.classList.remove('penny','nickel','dime','quarter');v.classList.add(type);
-      });
-    }
-  }
-  var _cObs=new MutationObserver(function(){applyCoinsColor();});
-  var _cHooked=false;
-  function hookCoins(){
-    var qEl=document.getElementById('coins-q');
-    var aEl=document.getElementById('coins-area');
-    if(!_cHooked&&(qEl||aEl)){
-      _cHooked=true;
-      if(aEl)_cObs.observe(aEl,{childList:true,subtree:true,characterData:true});
-      if(qEl)_cObs.observe(qEl,{childList:true,subtree:true,characterData:true});
-    }
-    applyCoinsColor();
-  }
-  hookCoins();
-  new MutationObserver(function(){_cHooked=false;hookCoins();}).observe(document.body,{childList:true,subtree:true});
-
-  /* Resume AudioContext on first user gesture */
-  document.addEventListener('click',function(){var a=getAC();if(a&&a.state==='suspended')a.resume();},{once:true,capture:true});
-})();
-/* === END FINAL POLISH JS v2 === */
 </script>
 
 <!-- ════════════ FOOTER INFO MODAL ════════════ -->
